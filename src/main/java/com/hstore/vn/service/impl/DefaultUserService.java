@@ -12,7 +12,6 @@ import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.User;
-import com.hstore.vn.entity.impl.DefaultUser;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.payload.UserDto;
 import com.hstore.vn.payload.converter.RoleConvert;
@@ -73,7 +72,7 @@ public class DefaultUserService implements UserService{
 	}
 
 	@Override
-	public void updateUser(DefaultUser user) {
+	public void updateUser(User user) {
 		userDao.updateUser(userConvert.userConvertToUserDto(user));
 	}
 
@@ -97,6 +96,11 @@ public class DefaultUserService implements UserService{
 	@Override
 	public List<User> getRefferedByUserId(Integer id) {
 		return userConvert.usersDtoConvertToUsers(userDao.getRefferedByUserId(id));
+	}
+
+	@Override
+	public List<UserDto> getAllUser() {
+		return userDao.getAllUsers();
 	}
 
 	

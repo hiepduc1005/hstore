@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.entity.impl.DefaultUser;
 import com.hstore.vn.payload.UserDto;
+import com.hstore.vn.payload.response.UserResponse;
 
 
 @Service
@@ -21,7 +22,7 @@ public class UserConvert {
 	public CartConvert cartConvert;
 	
 	public User userDtoConvertToUser(UserDto userDto) {
-		User user = new DefaultUser();
+		DefaultUser user = new DefaultUser();
 		
 		user.setId(userDto.getId());
 		user.setFirstName(userDto.getFirstName());
@@ -36,7 +37,8 @@ public class UserConvert {
 		user.setPartnerCode(userDto.getPartnerCode());
 		user.setReffererUser(userDtoConvertToUser(userDto.getReffererUser()));
 		user.setPassword(userDto.getPassword());
-		
+		user.setIsEnable(true);
+		user.setLocked(false);
 		return user;
 	}
 	
@@ -69,6 +71,35 @@ public class UserConvert {
 		}
 		
 		return users;
+	}
+	
+	public UserResponse userDtoConvertToUserResponse(UserDto userDto) {
+		UserResponse userResponse = new UserResponse(
+				userDto.getId(),
+				userDto.getFirstName(),
+				userDto.getLastName(),
+				userDto.getEmail(),
+				userDto.getPhoneNum(),
+				userDto.getRoles(),
+				userDto.getCart() == null ? null : userDto.getCart(),
+			    userDto.getMoney(),
+			    userDto.getCreditNum(),
+			    userDto.getPartnerCode(),
+			    userDto.getReffererUser(),
+			    false,
+			    true);
+		
+		return userResponse;
+				
+	}
+	
+	public List<UserResponse> usersDtoConvertToUsersResponse(List<UserDto> usersDto) {
+		List<UserResponse> userResponses = new ArrayList<UserResponse>();
+		for(UserDto userDto : usersDto) {
+			userResponses.add(userDtoConvertToUserResponse(userDto));
+		}
+		
+		return userResponses;
 	}
 
 }

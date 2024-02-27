@@ -2,7 +2,7 @@ package com.hstore.vn.payload.request;
 
 import java.util.List;
 
-import com.hstore.vn.entity.Role;
+import com.hstore.vn.payload.RoleDto;
 
 public class UserRequest {
 	
@@ -10,7 +10,7 @@ public class UserRequest {
 	public String lastName;
 	public String email;
 	public String password;
-	public List<Role> roles;
+	public List<RoleDto> roles;
 	public String getFirstName() {
 		return firstName;
 	}
@@ -35,13 +35,13 @@ public class UserRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List<Role> getRoles() {
+	public List<RoleDto> getRoles() {
 		return roles;
 	}
-	public void setRoles(List<Role> roles) {
+	public void setRoles(List<RoleDto> roles) {
 		this.roles = roles;
 	}
-	public UserRequest(String firstName, String lastName, String email, String password, List<Role> roles) {
+	public UserRequest(String firstName, String lastName, String email, String password, List<RoleDto> roles) {
 		
 		this.firstName = firstName;
 		this.lastName = lastName;
