@@ -20,4 +20,6 @@ public interface UserDao {
 	UserDto getUserByPartnerCode(String partnerCode);
 	
 	List<UserDto> getRefferedByUserId(Integer id);
+	
+	void deleteUser(Integer id);
 }

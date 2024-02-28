@@ -1,5 +1,8 @@
 package com.hstore.vn.payload.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.entity.Category;
@@ -12,6 +15,10 @@ import com.hstore.vn.payload.CategoryDto;
 public class CategoryConvert {
 	
 	public Category categoryDtoConvertToCategory(CategoryDto categoryDto) {
+		if(categoryDto == null) {
+			return null;
+		}
+		
 		Category category = new DefaultCategory();
 		
 		category.setCategoryId(categoryDto.getId());
@@ -21,12 +28,36 @@ public class CategoryConvert {
 	}
 	
 	public CategoryDto categoryConvertToCategoryDto(Category category) {
+		if(category == null) {
+			return null;
+		}
+		
 		CategoryDto categoryDto = new CategoryDto();
 		
 		categoryDto.setId(category.getCategoryId());
 		categoryDto.setName(category.getCategoryName());
 		
 		return categoryDto;
+	}
+	
+	public List<Category> categoriesDtoConvertToCategories(List<CategoryDto> categoryDtos){
+		List<Category> categories = new ArrayList<Category>();
+		
+		for(CategoryDto categoryDto : categoryDtos) {
+			categories.add(categoryDtoConvertToCategory(categoryDto));
+		}
+		
+		return categories;
+	}
+	
+	public List<CategoryDto> categoriesConvertToCategoriesDto(List<Category> categories){
+		List<CategoryDto> categoriesDto = new ArrayList<CategoryDto>();
+		
+		for(Category category : categories) {
+			categoriesDto.add(categoryConvertToCategoryDto(category));
+		}
+		
+		return categoriesDto;
 	}
 
 }

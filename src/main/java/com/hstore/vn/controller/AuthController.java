@@ -22,6 +22,7 @@ import com.hstore.vn.payload.request.RegistrationRequest;
 import com.hstore.vn.payload.response.ApiResponse;
 import com.hstore.vn.payload.response.AuthResponse;
 import com.hstore.vn.security.CustomUserDetailService;
+import com.hstore.vn.security.JWTGenerator;
 import com.hstore.vn.service.UserService;
 
 @RestController
@@ -42,6 +43,9 @@ public class AuthController {
 	
 	@Autowired
 	public UserService userService;
+	
+	@Autowired
+	public JWTGenerator jwtGenerator;
 	
 	
 	@PostMapping("/register")
@@ -67,7 +71,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
+	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest){
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						loginRequest.getEmail(),
@@ -76,9 +80,9 @@ public class AuthController {
 				);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+	    String token = jwtGenerator.generateToken(authentication);
 		
-		
-		return new ResponseEntity<String>("user is authenticated " , HttpStatus.OK);
+		return new ResponseEntity<AuthResponse>(new AuthResponse(token) , HttpStatus.OK);
 	}
 	
 	

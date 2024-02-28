@@ -1,6 +1,5 @@
 package com.hstore.vn.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +61,14 @@ public class UserController {
 				new ResponseEntity<List<UserResponse>>(userResponses,HttpStatus.OK),0);
 	}
 	
+	@GetMapping
+	public ApiResponse<ResponseEntity<UserResponse>> getUserByEmail(@RequestBody String email){
+		UserResponse userResponse = userConvert.userDtoConvertToUserResponse(userDao.getUserByEmail(email));
+		
+		return new ApiResponse<ResponseEntity<UserResponse>>("Get user with email " + email + " success!",
+				new ResponseEntity<UserResponse>(userResponse,HttpStatus.OK),0);
+	}
+	
 	@PutMapping
 	public ApiResponse<ResponseEntity<?>> updateUser(@RequestBody UserRequest userRequest){
 		UserDto userDto = userDao.getUserByEmail(userRequest.getEmail());
@@ -75,13 +82,14 @@ public class UserController {
 				new ResponseEntity<>(HttpStatus.OK),0);
 	}
 	
-//	@DeleteMapping
-//	public ApiResponse<ResponseEntity<?>> deleteUser(@RequestBody Integer id){
-//		UserDto userDto = userDao.getUserById(id);
-//		
-//		
-//		return new ApiResponse<ResponseEntity<?>>("Update user " + userRequest.getEmail() + " success!",
-//				new ResponseEntity<>(HttpStatus.OK),0);
-//	}
+	@DeleteMapping
+	public ApiResponse<ResponseEntity<?>> deleteUser(@RequestBody Integer id){
+		userService.deleteUser(id);
+		
+		return new ApiResponse<ResponseEntity<?>>("Delete user with id " + id + " success !",
+				new ResponseEntity<>(HttpStatus.OK),0);
+	}
+	
+	
 	
 }

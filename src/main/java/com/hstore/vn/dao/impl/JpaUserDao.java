@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.exception.user.UserNotFoundException;
 import com.hstore.vn.payload.UserDto;
 
 import jakarta.persistence.EntityManager;
@@ -30,7 +31,6 @@ public class JpaUserDao implements UserDao {
 
 	@Transactional
 	@Override
-	@Modifying
 	public boolean saveUser(UserDto user) {
 		em.merge(user);
 		return true;
@@ -51,6 +51,9 @@ public class JpaUserDao implements UserDao {
 		
 	    typedQuery.setParameter("email",email); 
 	    UserDto userDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+	    if(userDto == null) {
+	    	throw new UserNotFoundException("Can not find user with email : " + email);
+	    }
 	    if(userDto != null) {
 	    	userDto.enabled = true;
 	    }
@@ -83,6 +86,21 @@ public class JpaUserDao implements UserDao {
 		typedQuery.setParameter("id", id);
 		List<UserDto> userDtos = typedQuery.getResultList();
 		return userDtos;
+	}
+
+	@Transactional
+	@Override
+	public void deleteUser(Integer id) {
+		TypedQuery<UserDto> typedQuery =
+				em.createQuery("DELETE FROM user u WHERE u.id = :id" , UserDto.class);
+		
+		typedQuery.setParameter("id", id);
+		
+		 int rowsAffected = typedQuery.executeUpdate();
+	        if (rowsAffected == 0) {
+	        	throw new UserNotFoundException("User with id " + id + " not found.");
+	        }
+		
 	}
 	
 	

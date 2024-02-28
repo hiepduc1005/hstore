@@ -18,19 +18,21 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = EmailAlreadyExitsException.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleEmailAlreadyExists(EmailAlreadyExitsException ex) {
-        ResponseEntity<String> responseEntity = new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
-        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>("Email already exists", responseEntity, -1);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 	
 	@ExceptionHandler(value = NotFoundProductException.class)
-	public ResponseEntity<String> handleNotFoundProduct(){
-		return new ResponseEntity<String>("Not found product",HttpStatus.NOT_FOUND);
+	public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleNotFoundProduct(NotFoundProductException ex ){
+		 ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	     ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+	     return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.BAD_REQUEST);
 	}
 	
 	
 	@ExceptionHandler(value = CreateProductFailuerException.class)
-	public ResponseEntity<String> handleCreateProductFailuer(){
+	public ResponseEntity<String> handleCreateProductFailuer(CreateProductFailuerException ex){
 		return new ResponseEntity<String>("Can not create product",HttpStatus.BAD_REQUEST);
 	}
 	

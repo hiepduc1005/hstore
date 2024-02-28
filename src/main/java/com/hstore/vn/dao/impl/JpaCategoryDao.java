@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.CategoryDao;
+import com.hstore.vn.exception.category.NotFoundCategoryException;
 import com.hstore.vn.payload.CategoryDto;
 
 import jakarta.persistence.EntityManager;
@@ -42,9 +43,36 @@ public class JpaCategoryDao implements CategoryDao{
 		TypedQuery<CategoryDto> typedQuery = entityManager.createQuery(
 				"SELECT c FROM category c",CategoryDto.class);
 		List<CategoryDto> categoryDtos = typedQuery.getResultList();
+		if(categoryDtos.isEmpty()) {
+			throw new NotFoundCategoryException("Not found any category");
+		}
 		return categoryDtos;
 	}
-	
+
+	@Transactional
+	@Override
+	public void createCategory(CategoryDto categoryDto) {
+		try {
+			entityManager.merge(categoryDto);
+		}catch (Exception e) {
+			throw new IllegalArgumentException("Failed to create category");
+		}
+		
+	}
+
+	@Transactional
+	@Override
+	public void deleteCategory(Integer id) {
+		TypedQuery<CategoryDto> typedQuery =
+				entityManager.createQuery("DELETE FROM category c WHERE c.id = :id" , CategoryDto.class);
+		
+		typedQuery.setParameter("id", id);
+		
+		 int rowsAffected = typedQuery.executeUpdate();
+	        if (rowsAffected == 0) {
+	        	throw new NotFoundCategoryException("Can not found category with id : " + id);
+	        }
+	}
 	
 
 }

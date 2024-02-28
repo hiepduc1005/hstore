@@ -84,8 +84,7 @@ public class SecurityConfiguration {
 		    .authorizeHttpRequests(requestMatcher -> 
 		                       requestMatcher.anyRequest().authenticated())
 		    .exceptionHandling(authEntryPoint ->
-		                       authEntryPoint.authenticationEntryPoint(authenticationEntryPoint))
-		    .httpBasic();
+		                       authEntryPoint.authenticationEntryPoint(authenticationEntryPoint));
 		
 	
 		    

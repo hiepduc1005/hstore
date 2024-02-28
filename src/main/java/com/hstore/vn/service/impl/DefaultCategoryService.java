@@ -1,5 +1,7 @@
 package com.hstore.vn.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,21 @@ public class DefaultCategoryService implements CategoryService{
 		// TODO Auto-generated method stub
 		return categoryConvert.categoryDtoConvertToCategory(
 				categoryDao.getCategoryById(id));
+	}
+
+	@Override
+	public List<Category> getAllCategories() {
+		return categoryConvert.categoriesDtoConvertToCategories(categoryDao.getAllCategories());
+	}
+
+	@Override
+	public void createCategory(Category category) {
+		categoryDao.createCategory(categoryConvert.categoryConvertToCategoryDto(category));
+	}
+
+	@Override
+	public void deleteCategory(Integer id) {
+		categoryDao.deleteCategory(id);
 	}
 
 }

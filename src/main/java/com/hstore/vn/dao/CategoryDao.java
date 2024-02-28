@@ -12,4 +12,8 @@ public interface CategoryDao {
 	CategoryDto getCategoryById(Integer id);
 	
 	List<CategoryDto> getAllCategories();
+	
+	void createCategory(CategoryDto categoryDto);
+	
+	void deleteCategory(Integer id);
 }

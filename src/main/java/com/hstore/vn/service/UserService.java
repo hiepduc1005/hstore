@@ -21,5 +21,7 @@ public interface UserService {
 	List<User> getRefferedByUserId(Integer id);
 	
 	List<UserDto> getAllUser();
+	
+	void deleteUser(Integer id);
 
 }

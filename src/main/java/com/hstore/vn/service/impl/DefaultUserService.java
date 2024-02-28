@@ -103,6 +103,11 @@ public class DefaultUserService implements UserService{
 		return userDao.getAllUsers();
 	}
 
+	@Override
+	public void deleteUser(Integer id) {
+		userDao.deleteUser(id);
+	}
+
 	
 	
 	
