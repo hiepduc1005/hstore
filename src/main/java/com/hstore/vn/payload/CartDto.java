@@ -18,13 +18,13 @@ import jakarta.persistence.Table;
 public class CartDto {
 	
 	@Id
-	@Column(name = "user_id")
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer userId;
+	public Integer id;
 	
 	@ManyToMany
 	@JoinTable(name = "carts_products",
-	           joinColumns = @JoinColumn(name = "cart_user_id"),
+	           joinColumns = @JoinColumn(name = "cart_id"),
 	           inverseJoinColumns = @JoinColumn(name = "product_id"))
 	public List<ProductDto> products;
 	
@@ -38,12 +38,12 @@ public class CartDto {
 		this.products = products;
 	}
 
-	public Integer getUserId() {
-		return userId;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setId(Integer Id) {
+		this.id = Id;
 	}
 	
 	

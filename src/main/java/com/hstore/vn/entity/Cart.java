@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface Cart {
 	
-	void setUserId(Integer userId);
-	Integer getUserId();
+	void setId(Integer id);
+	Integer getId();
 	
 	List<Product> getProducts();
 	void setProducts(List<Product> products);

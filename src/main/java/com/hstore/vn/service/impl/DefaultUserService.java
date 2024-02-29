@@ -9,10 +9,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.SetupDataLoader;
+import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
+import com.hstore.vn.payload.CartDto;
 import com.hstore.vn.payload.UserDto;
 import com.hstore.vn.payload.converter.RoleConvert;
 import com.hstore.vn.payload.converter.UserConvert;
@@ -40,6 +42,9 @@ public class DefaultUserService implements UserService{
 	@Autowired
 	public BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	@Autowired
+	public CartDao cartDao;
+	
 	
 	@Override
 	public void registerUser(UserDto user ,String refferedUserPartnerCode) {
@@ -58,7 +63,9 @@ public class DefaultUserService implements UserService{
 		else {
 			 user.setReffererUser(null);
 		}
-      
+		CartDto cartDto = new CartDto();
+		cartDto = cartDao.createCart(cartDto);
+		user.setCart(cartDto);
         user.setPartnerCode(partnerCode.genneratePartnerCode());
         user.setMoney(BigDecimal.ZERO);
         

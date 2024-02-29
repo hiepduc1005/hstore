@@ -1,5 +1,8 @@
 package com.hstore.vn.payload.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +21,7 @@ public class CartConvert {
 		Cart cart = new DefaultCart();
 		
 		cart.setProducts(productConvert.productsDtoConvertToProducts(cartDto.getProducts()));
-		cart.setUserId(cartDto.getUserId());
+		cart.setId(cartDto.getId());
 		
 		return cart;
 	}
@@ -27,9 +30,29 @@ public class CartConvert {
 		CartDto cartDto = new CartDto();
 		
 		cartDto.setProducts(productConvert.productsConvertToProductsDto(cart.getProducts()));
-		cartDto.setUserId(cart.getUserId());
+		cartDto.setId(cart.getId());
 		
 		return cartDto;
+	}
+	
+	public List<Cart> cartsDtoConvertToCart(List<CartDto> cartDtos){
+		List<Cart> carts = new ArrayList<Cart>();
+		
+		for(CartDto cartDto : cartDtos) {
+			carts.add(cartDtoConvertToCart(cartDto));
+		}
+		
+		return carts;
+	}
+	
+	public List<CartDto> cartsConvertToCartDto(List<Cart> carts){
+		List<CartDto> cartDtos = new ArrayList<CartDto>();
+		
+		for(Cart cart : carts) {
+			cartDtos.add(cartConvertToCartDto(cart));
+		}
+		
+		return cartDtos;
 	}
 
 }

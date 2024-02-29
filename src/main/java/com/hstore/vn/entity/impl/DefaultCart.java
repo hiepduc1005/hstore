@@ -8,9 +8,9 @@ import com.hstore.vn.entity.Product;
 
 
 public class DefaultCart implements Cart{
-	
+	public Integer id;
 	public List<Product> products;
-	public Integer userId;
+	
 
 	@Override
 	public List<Product> getProducts() {
@@ -26,15 +26,15 @@ public class DefaultCart implements Cart{
 	
 
 	@Override
-	public void setUserId(Integer userId) {
+	public void setId(Integer id) {
 		// TODO Auto-generated method stub
-		this.userId = userId;
+		this.id = id;
 	}
 
 	@Override
-	public Integer getUserId() {
+	public Integer getId() {
 		// TODO Auto-generated method stub
-		return this.userId;
+		return this.id;
 	}
 
 }
