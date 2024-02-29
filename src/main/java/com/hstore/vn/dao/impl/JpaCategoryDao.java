@@ -27,12 +27,18 @@ public class JpaCategoryDao implements CategoryDao{
 		
 		typedQuery.setParameter("name", name);
 		CategoryDto categoryDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		if(categoryDto == null) {
+			throw new NotFoundCategoryException("Not found category with name = " + name);
+		}
 		return categoryDto;
 	}
 
 	@Transactional
 	@Override
 	public CategoryDto getCategoryById(Integer id) {
+		if(id == null || id < 1) {
+			throw new IllegalArgumentException("Not found cagegory");
+		}
 		CategoryDto categoryDto = entityManager.find(CategoryDto.class, id);
 		return categoryDto;
 	}

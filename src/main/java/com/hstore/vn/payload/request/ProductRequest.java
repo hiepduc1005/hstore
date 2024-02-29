@@ -2,12 +2,11 @@ package com.hstore.vn.payload.request;
 
 import java.math.BigDecimal;
 
-import com.hstore.vn.entity.Category;
 
 public class ProductRequest {
 	
 	public String name;
-	public Category category;
+	public CategoryRequest category;
 	public BigDecimal price;
 	public String description;
 	public String imgName;
@@ -18,10 +17,10 @@ public class ProductRequest {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Category getCategory() {
+	public CategoryRequest getCategory() {
 		return category;
 	}
-	public void setCategory(Category category) {
+	public void setCategory(CategoryRequest category) {
 		this.category = category;
 	}
 	public BigDecimal getPrice() {
@@ -42,7 +41,7 @@ public class ProductRequest {
 	public void setImgName(String imgName) {
 		this.imgName = imgName;
 	}
-	public ProductRequest( String name, Category category, BigDecimal price, String description,
+	public ProductRequest( String name, CategoryRequest category, BigDecimal price, String description,
 			String imgName) {
 		
 		

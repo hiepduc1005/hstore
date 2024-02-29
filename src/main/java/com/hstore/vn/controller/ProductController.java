@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.entity.Product;
-import com.hstore.vn.entity.impl.DefaultProduct;
 import com.hstore.vn.exception.product.NotFoundProductException;
+import com.hstore.vn.payload.converter.ProductConvert;
 import com.hstore.vn.payload.request.ProductRequest;
 import com.hstore.vn.payload.response.ApiResponse;
 import com.hstore.vn.service.impl.DefaultProductService;
@@ -27,6 +28,9 @@ public class ProductController {
 	
 	@Autowired
 	public DefaultProductService productService;
+	
+	@Autowired
+	public ProductConvert productConvert;
 	
 	@GetMapping("/all")
 	public ApiResponse<ResponseEntity<List<Product>>> getProducts(){
@@ -42,12 +46,6 @@ public class ProductController {
 		return apiResponse;
 	}
 	
-	@GetMapping("/test")
-	public String test(){
-	
-		
-		return "Not secure Api";
-	}
 	
 	@GetMapping("/{uuid}")
 	public ApiResponse<ResponseEntity<Product>> getProductById(@PathVariable String uuid){
@@ -65,20 +63,42 @@ public class ProductController {
 		
 	}
 	
+	@GetMapping("/category/{categoryId}")
+	public ApiResponse<ResponseEntity<List<Product>>> getProductsByCategoryWithPageAndLimit(
+			@PathVariable Integer categoryId,
+			@RequestParam(defaultValue = "1" , required = false) Integer pageNumber ,
+			@RequestParam(defaultValue = "10" , required = false) Integer limitProduct)
+	{
+		
+		List<Product> products = productService.getProductsByCategoryForPageWithLimit(categoryId, pageNumber, limitProduct);
+		
+		return new ApiResponse<ResponseEntity<List<Product>>>(
+				"Get product with category id : " + categoryId + " and page = " + pageNumber + " , limit = " + limitProduct + " success !",
+				new ResponseEntity<List<Product>>(products , HttpStatus.OK),0);
+	}
+	
+	@GetMapping
+	public ApiResponse<ResponseEntity<List<Product>>> getProductsBySearchWithPageAndLimit(
+			@RequestParam(required = true,defaultValue = "") String searchQuery ,
+			@RequestParam(required = false,defaultValue = "1") Integer pageNumber ,
+			@RequestParam(required = false , defaultValue = "10") Integer limit
+			)
+	{
+		List<Product> products = productService.getProductsLikeNameForPageWithLimit(searchQuery, pageNumber, limit);
+		
+		return new ApiResponse<ResponseEntity<List<Product>>>(
+				"Get product with search query : " + searchQuery + " and page = " + pageNumber + " , limit = " + limit + " success !",
+				new ResponseEntity<List<Product>>(products , HttpStatus.OK),0);
+	}
+	
 	@PostMapping
 	public ApiResponse<ResponseEntity<Product>> postProduct(
 			@RequestBody ProductRequest productRequest ){
 		
-		Product product = new DefaultProduct(
-				productRequest.getName(),
-				productRequest.getCategory(),
-				productRequest.getPrice(),
-				productRequest.getDescription(),
-				productRequest.getImgName());
-		
+		Product product = productConvert.productRequestConvertToProduct(productRequest);
 		
 		productService.saveProduct(product);
-			
+	
 		ResponseEntity<Product> re = new ResponseEntity<Product>(product,HttpStatus.ACCEPTED);
 		
 		ApiResponse<ResponseEntity<Product>> apiResponse =
@@ -92,15 +112,10 @@ public class ProductController {
 	public ApiResponse<ResponseEntity<Product>> putProduct(
 			@RequestBody ProductRequest productRequest ){
 		
-		Product product = new DefaultProduct(
-				productRequest.getName(),
-				productRequest.getCategory(),
-				productRequest.getPrice(),
-				productRequest.getDescription(),
-				productRequest.getImgName());
+		Product product = productConvert.productRequestConvertToProduct(productRequest);
 		
 		
-		productService.saveProduct(product);
+		productService.updateProduct(product);
 			
 		ResponseEntity<Product> re = new ResponseEntity<Product>(product,HttpStatus.ACCEPTED);
 		

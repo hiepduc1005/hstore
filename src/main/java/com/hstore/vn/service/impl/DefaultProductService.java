@@ -58,6 +58,10 @@ public class DefaultProductService implements ProductService {
 	public List<Product> getProductsLikeNameForPageWithLimit(String querySearch, Integer page,
 			Integer paginationLimit) {
 		
+		if(querySearch.isEmpty()) {
+			return getAllProductWithPaginationLimit(page, paginationLimit);
+		}
+		
 		return productConvert.productsDtoConvertToProducts(
 				productDao.getProductLikeNameWithPaginationLimit(querySearch, page, paginationLimit));
 	}
@@ -95,6 +99,19 @@ public class DefaultProductService implements ProductService {
 	@Override
 	public void deleteProduct(String uuid) {
 		productDao.deleteProduct(uuid);
+	}
+
+	@Override
+	public Product getProductByName(String name) {
+		// TODO Auto-generated method stub
+		return productConvert.productDtoConvertToProduct(productDao.getProductByName(name));
+	}
+
+	@Override
+	public List<Product> getAllProductWithPaginationLimit(Integer page, Integer limit) {
+		
+		return productConvert.productsDtoConvertToProducts(
+				productDao.getAllProductWithPaginationLimit(page, limit));
 	}
 
 }

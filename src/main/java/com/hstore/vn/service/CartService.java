@@ -12,7 +12,7 @@ public interface CartService {
 	
 	Integer getNumbersOfProductInCart(Integer cartId);
 	
-	BigDecimal getTotalPriceInCartByCartId(Integer cartId);
+	BigDecimal getTotalPriceInCartByAuthenticatedUser();
 	
 	List<Product> getProductsInCart(Integer cartId);
 	
@@ -25,4 +25,6 @@ public interface CartService {
 	Cart createCart(Cart cartDto);
 	
 	Cart getCartByUserEmail(String email);
+	
+	Cart getCartById(Integer cartId);
 }

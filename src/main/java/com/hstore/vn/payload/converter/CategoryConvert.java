@@ -3,16 +3,22 @@ package com.hstore.vn.payload.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hstore.vn.dao.CategoryDao;
 import com.hstore.vn.entity.Category;
 import com.hstore.vn.entity.impl.DefaultCategory;
 import com.hstore.vn.payload.CategoryDto;
+import com.hstore.vn.payload.request.CategoryRequest;
 
 
 
 @Service
 public class CategoryConvert {
+	
+	@Autowired
+	public CategoryDao categoryDao;
 	
 	public Category categoryDtoConvertToCategory(CategoryDto categoryDto) {
 		if(categoryDto == null) {
@@ -59,5 +65,11 @@ public class CategoryConvert {
 		
 		return categoriesDto;
 	}
+	
+	public Category categoryRequestConvertToCategory(CategoryRequest categoryRequest) {
+		CategoryDto categoryDto =categoryDao.getCategoryByName(categoryRequest.getName());
+		return categoryDtoConvertToCategory(categoryDto);
+	}
+
 
 }

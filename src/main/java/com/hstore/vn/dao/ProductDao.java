@@ -27,6 +27,8 @@ public interface ProductDao {
 	
 	List<ProductDto> getProductLikeNameWithPaginationLimit(String query, Integer page, Integer paginationLimit);
 	
+	List<ProductDto> getAllProductWithPaginationLimit(Integer page, Integer paginationLimit);
+ 	
 	Integer getProductCountBySearch(String query);
 	
 	Integer getProductCountByCategoryId(Integer id);
@@ -34,5 +36,7 @@ public interface ProductDao {
 	Integer getProductCountByCategoryName(String categoryName);
 	
 	ProductDto getProductById(Integer id);
+	
+	ProductDto getProductByName(String name);
 
 }

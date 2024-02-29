@@ -56,6 +56,9 @@ public class JpaCartDao implements CartDao{
 		
 		List<ProductDto> productDtos = cartDto.getProducts();
 		ProductDto productDto = productDao.getProductById(productId);
+		if(productDto == null) {
+			throw new NotFoundProductException("Can not found product with id : " + productId);
+		}	
 		productDtos.add(productDto);
 		
 		cartDto.setProducts(productDtos);
@@ -83,6 +86,9 @@ public class JpaCartDao implements CartDao{
 			throw new NotFoundProductException("Not found any product in cart");
 		}
 		ProductDto productDto = productDao.getProductById(productId);
+		if(productDto == null) {
+			throw new NotFoundProductException("Can not found product with id : " + productId);
+		}
 		productDtos.remove(productDto);
 		
 		cartDto.setProducts(productDtos);

@@ -6,9 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hstore.vn.entity.Category;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.impl.DefaultProduct;
 import com.hstore.vn.payload.ProductDto;
+import com.hstore.vn.payload.request.ProductRequest;
+import com.hstore.vn.service.CategoryService;
 
 
 
@@ -17,6 +20,9 @@ public class ProductConvert {
 	
 	@Autowired
 	public CategoryConvert categoryConvert;
+	
+	@Autowired
+	public CategoryService categoryService;
 	
 	public Product productDtoConvertToProduct(ProductDto productDto) {
 		Product product = new DefaultProduct();
@@ -66,6 +72,19 @@ public class ProductConvert {
 		return productsDto;
 	}
 	
+	public Product productRequestConvertToProduct(ProductRequest productRequest) {
+		Category category = categoryService.getCategoryByName(productRequest.getCategory().getName());
+		
+		Product product = new DefaultProduct();
+		product.setProductName(productRequest.getName());
+		product.setProductDescription(productRequest.getDescription());
+		product.setImg(productRequest.getImgName());
+		product.setPrice(productRequest.getPrice());
+		product.setCategory(category);
+		
+		
+		return product;
+	}
 	
 	
 }

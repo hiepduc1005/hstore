@@ -30,5 +30,9 @@ public interface ProductService {
 	void updateProduct(Product product);
 	
 	void deleteProduct(String uuid);
+	
+	public Product getProductByName(String name);
+	
+	List<Product> getAllProductWithPaginationLimit(Integer page , Integer limit);
  
 }
