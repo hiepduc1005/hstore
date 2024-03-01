@@ -19,6 +19,10 @@ public class RoleConvert {
 	public PrivilegeConvert privilegeConvert;
 	
 	public Role roleDtoConvertToRole(RoleDto roleDto) {
+		if(roleDto == null) {
+			return null;
+		}
+		
 		Role role = new DefaultRole();
 		
 		role.setId(roleDto.getId());
@@ -29,6 +33,10 @@ public class RoleConvert {
 	}
 	
 	public RoleDto roleConvertToRoleDto(Role role) {
+		if(role == null) {
+			return null;
+		}
+		
 		RoleDto roleDto = new RoleDto();
 		
 		roleDto.setId(role.getId());
@@ -39,6 +47,11 @@ public class RoleConvert {
 	}
 	
 	public List<Role> convertRolesDtoToRoles(List<RoleDto> roleDtos){
+		if(roleDtos == null) {
+			return null;
+		}
+		
+		
 		List<Role> roles = new ArrayList<Role>();
 		
 		for(RoleDto roleDto : roleDtos) {
@@ -49,6 +62,10 @@ public class RoleConvert {
 	}
 	
 	public List<RoleDto> convertRolesToRolesDto(List<Role> roles){
+		if(roles == null) {
+			return null;
+		}
+		
 		List<RoleDto> rolesDto = new ArrayList<RoleDto>();
 		
 		for(Role role : roles) {

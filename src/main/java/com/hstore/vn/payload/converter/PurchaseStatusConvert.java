@@ -11,6 +11,10 @@ import com.hstore.vn.payload.PurchaseStatusDto;
 public class PurchaseStatusConvert {
 	
 	public PurchaseStatus convertPurchaseStatusDtoToPurchaseStatus(PurchaseStatusDto orderStatusDto) {
+		if(orderStatusDto == null) {
+			return null;
+		}
+		
 		PurchaseStatus orderStatus = new DefaultPurchaseStatus();
 		
 		orderStatus.setOderStatusId(orderStatusDto.getId());
@@ -20,6 +24,10 @@ public class PurchaseStatusConvert {
 	}
 	
 	public PurchaseStatusDto convertPurchaseStatusToPurchaseStatusDto(PurchaseStatus orderStatus) {
+		if(orderStatus == null) {
+			return null;
+		}
+		
 		PurchaseStatusDto orderStatusDto = new PurchaseStatusDto();
 		
 		orderStatusDto.setId(orderStatus.getPurchaseStatusId());

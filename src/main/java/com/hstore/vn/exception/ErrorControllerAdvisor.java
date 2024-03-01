@@ -25,9 +25,9 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = NotFoundProductException.class)
 	public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleNotFoundProduct(NotFoundProductException ex ){
-		 ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		 ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	     ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
-	     return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.BAD_REQUEST);
+	     return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
 	}
 	
 	

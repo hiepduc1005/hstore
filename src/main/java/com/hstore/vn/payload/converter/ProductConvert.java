@@ -26,33 +26,39 @@ public class ProductConvert {
 	
 	public Product productDtoConvertToProduct(ProductDto productDto) {
 		Product product = new DefaultProduct();
-		
-		product.setCategory(categoryConvert.categoryDtoConvertToCategory(productDto.getCategory()));
-		product.setImg(productDto.getImgName());
-		product.setPrice(productDto.getPrice());
-		product.setProductDescription(productDto.getDescription());
-		product.setProductGUID(productDto.getGuid());
-		product.setProductId(productDto.getId());
-		product.setProductName(productDto.getName());
-		
-		return product;
+		if(productDto != null) {
+			product.setCategory(categoryConvert.categoryDtoConvertToCategory(productDto.getCategory()));	
+			product.setImg(productDto.getImgName());
+			product.setPrice(productDto.getPrice());
+			product.setProductDescription(productDto.getDescription());
+			product.setProductGUID(productDto.getGuid());
+			product.setProductId(productDto.getId());
+			product.setProductName(productDto.getName());
+		}
+		return null;
 	}
 	
 	public ProductDto productConvertToProductDto(Product product) {
 		ProductDto productDto = new ProductDto();
+		if(product != null) {
+		  productDto.setCategory(categoryConvert.categoryConvertToCategoryDto(product.getCategory()));
+		  productDto.setImgName(product.getImg());
+		  productDto.setPrice(product.getPrice());
+		  productDto.setDescription(product.getProductDescription());
+		  productDto.setGuid(product.getProductGUID());
+		  productDto.setId(product.getProductId());
+		  productDto.setName(product.getProductName());
+		}
 		
-		productDto.setCategory(categoryConvert.categoryConvertToCategoryDto(product.getCategory()));
-		productDto.setImgName(product.getImg());
-		productDto.setPrice(product.getPrice());
-		productDto.setDescription(product.getProductDescription());
-		productDto.setGuid(product.getProductGUID());
-		productDto.setId(product.getProductId());
-		productDto.setName(product.getProductName());
 		
-		return productDto;
+		return null;
 	}
 	
 	public List<Product> productsDtoConvertToProducts(List<ProductDto> productDtos){
+		if(productDtos == null) {
+			return null;
+		}
+		
 		List<Product> products = new ArrayList<Product>();
 		
 		for(ProductDto productDto : productDtos) {
@@ -63,6 +69,10 @@ public class ProductConvert {
 	}
 	
 	public List<ProductDto> productsConvertToProductsDto(List<Product> products){
+		if(products == null) {
+			return null;
+		}
+		
 		List<ProductDto> productsDto = new ArrayList<ProductDto>();
 		
 		for(Product product : products) {

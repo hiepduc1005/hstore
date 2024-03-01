@@ -22,6 +22,10 @@ public class UserConvert {
 	public CartConvert cartConvert;
 	
 	public User userDtoConvertToUser(UserDto userDto) {
+		if(userDto == null) {
+			return null;
+		}
+		
 		DefaultUser user = new DefaultUser();
 		
 		user.setId(userDto.getId());
@@ -43,6 +47,10 @@ public class UserConvert {
 	}
 	
 	public UserDto userConvertToUserDto(User user) {
+		if(user == null) {
+			return null;
+		}
+		
 		UserDto userDto = new UserDto();
 		
 		userDto.setId(user.getId());
@@ -64,6 +72,10 @@ public class UserConvert {
 	}
 	
 	public List<User> usersDtoConvertToUsers(List<UserDto> userDtos){
+		if(userDtos == null) {
+			return null;
+		}
+		
 		List<User> users = new ArrayList<User>();
 		
 		for(UserDto userDto : userDtos) {

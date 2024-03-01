@@ -69,21 +69,22 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		PrivilegeDto writePrivilege = createPrivilegeIfNotFound(WRITE_PRIVILEGE);
 		PrivilegeDto deletePrivilege = createPrivilegeIfNotFound(DELETE_PRIVILEGE);
 		
-		RoleDto roleCustomer = createRoleIfNotFound(ROLE_CUSTOMER,Arrays.asList(readPrivilege));
-		RoleDto roleManager = createRoleIfNotFound(ROLE_MANAGER,Arrays.asList(readPrivilege,writePrivilege));
-		RoleDto roleAdmin = createRoleIfNotFound(ROLE_ADMIN,Arrays.asList(readPrivilege,writePrivilege,deletePrivilege));
+		createRoleIfNotFound(ROLE_CUSTOMER,Arrays.asList(readPrivilege));
+		createRoleIfNotFound(ROLE_MANAGER,Arrays.asList(readPrivilege,writePrivilege));
+		createRoleIfNotFound(ROLE_ADMIN,Arrays.asList(readPrivilege,writePrivilege,deletePrivilege));
 		
-		
-        createUserIfNotFound(roleAdmin,"admin@gmail.com","admin");
-        createUserIfNotFound(roleManager,"manager@gmail.com" ,"manager");
-        createUserIfNotFound(roleCustomer,"test@gmail.com", "test");
+		createOrderStatusIfNotFound(RECEIVE_REQUEST);
+        createOrderStatusIfNotFound(WAITING_FOR_PAYMENT);
+        createOrderStatusIfNotFound(COMPLETED);
+        createOrderStatusIfNotFound(PAYED);
+        createOrderStatusIfNotFound(SHIPPED);
+        createOrderStatusIfNotFound(SHIPPING);
         
-        createOrderStatusIfNotFound(RECEIVE_REQUEST,1);
-        createOrderStatusIfNotFound(WAITING_FOR_PAYMENT,2);
-        createOrderStatusIfNotFound(COMPLETED,6);
-        createOrderStatusIfNotFound(PAYED,5);
-        createOrderStatusIfNotFound(SHIPPED,4);
-        createOrderStatusIfNotFound(SHIPPING,3);
+//        createUserIfNotFound(roleAdmin,"admin@gmail.com","admin");
+//        createUserIfNotFound(roleManager,"manager@gmail.com" ,"manager");
+//        createUserIfNotFound(roleCustomer,"test@gmail.com", "test");
+//        
+        
 		
 
 		isConfigured = true;
@@ -130,11 +131,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		return privilegeDto;
 	}
 	
-	private void createOrderStatusIfNotFound(String statusName,Integer id) {
+	private void createOrderStatusIfNotFound(String statusName) {
 		PurchaseStatusDto orderStatusDto = orderStatusDao.getPurchaseStatusByName(statusName);
 		if(orderStatusDto == null) {
 			orderStatusDto = new PurchaseStatusDto();
-			orderStatusDto.setId(id);
 			orderStatusDto.setStatusName(statusName);
 			orderStatusDao.savePurchaseStatus(orderStatusDto);
 		}

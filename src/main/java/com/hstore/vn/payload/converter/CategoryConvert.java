@@ -47,6 +47,10 @@ public class CategoryConvert {
 	}
 	
 	public List<Category> categoriesDtoConvertToCategories(List<CategoryDto> categoryDtos){
+		if(categoryDtos == null) {
+			return null;
+		}
+		
 		List<Category> categories = new ArrayList<Category>();
 		
 		for(CategoryDto categoryDto : categoryDtos) {
@@ -57,6 +61,10 @@ public class CategoryConvert {
 	}
 	
 	public List<CategoryDto> categoriesConvertToCategoriesDto(List<Category> categories){
+		if(categories == null) {
+			return null;
+		}
+		
 		List<CategoryDto> categoriesDto = new ArrayList<CategoryDto>();
 		
 		for(Category category : categories) {

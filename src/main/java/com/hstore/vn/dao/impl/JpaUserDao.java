@@ -51,9 +51,6 @@ public class JpaUserDao implements UserDao {
 		
 	    typedQuery.setParameter("email",email); 
 	    UserDto userDto = typedQuery.getResultList().stream().findFirst().orElse(null);
-	    if(userDto == null) {
-	    	throw new UserNotFoundException("Can not find user with email : " + email);
-	    }
 	    if(userDto != null) {
 	    	userDto.enabled = true;
 	    }

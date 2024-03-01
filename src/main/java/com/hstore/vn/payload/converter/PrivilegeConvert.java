@@ -14,6 +14,10 @@ import com.hstore.vn.payload.PrivilegeDto;
 public class PrivilegeConvert {
 	
 	public Privilege privilegeDtoConvertToPrivilege(PrivilegeDto privilegeDto) {
+		if(privilegeDto == null) {
+			return null;
+		}
+		
 		Privilege privilege = new DefaultPrivilege();
 		
 		privilege.setId(privilegeDto.getId());
@@ -24,6 +28,10 @@ public class PrivilegeConvert {
 	}
 	
 	public PrivilegeDto privilegeConvertToPrivilegeDto(Privilege privilege) {
+		if(privilege == null) {
+			return null;
+		}
+		
 		PrivilegeDto privilegeDto = new PrivilegeDto();
 		
 		privilegeDto.setId(privilege.getId());
@@ -34,6 +42,11 @@ public class PrivilegeConvert {
 	}
 	
 	public List<Privilege> convertPrivilegeDtosToPrivileges(List<PrivilegeDto> privilegeDtos){
+		if(privilegeDtos == null) {
+			return null;
+		}
+		
+		
 		List<Privilege> privileges = new ArrayList<Privilege>();
 		
 		for(PrivilegeDto privilegeDto : privilegeDtos) {
@@ -44,6 +57,10 @@ public class PrivilegeConvert {
 	}
 	
 	public List<PrivilegeDto> convertPrivilegesToPrivilegeDtos(List<Privilege> privileges){
+		if(privileges == null) {
+			return null;
+		}
+		
 		List<PrivilegeDto> privilegeDtos = new ArrayList<PrivilegeDto>();
 		
 		for(Privilege privilege : privileges) {

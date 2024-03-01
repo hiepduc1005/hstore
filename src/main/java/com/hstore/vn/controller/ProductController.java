@@ -48,7 +48,7 @@ public class ProductController {
 	
 	
 	@GetMapping("/{uuid}")
-	public ApiResponse<ResponseEntity<Product>> getProductById(@PathVariable String uuid){
+	public ApiResponse<ResponseEntity<Product>> getProductByUuid(@PathVariable String uuid){
 		Product product = productService.getProductByGuid(uuid);
 		if(product == null) {
 			throw new NotFoundProductException("Not found product with uuid : " + uuid);

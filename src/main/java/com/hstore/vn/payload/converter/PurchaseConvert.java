@@ -25,6 +25,10 @@ public class PurchaseConvert {
 	public UserConvert userConvert;
 	
 	public Purchase convertPurchaseDtoToPurchase(PurchaseDto purchaseDto) {
+		if(purchaseDto == null) {
+			return null;
+		}
+		
 		Purchase purchase = new DefaultPurchase();
 		
 		purchase.setPurchaseId(purchaseDto.getId());
@@ -37,6 +41,10 @@ public class PurchaseConvert {
 	}
 	
 	public PurchaseDto convertPurchaseToPurchaseDto(Purchase purchase) {
+		if(purchase == null) {
+			return null;
+		}
+		
 		PurchaseDto purchaseDto = new PurchaseDto();
 		
 		purchaseDto.setId(purchase.getPurchaseId());
@@ -49,6 +57,10 @@ public class PurchaseConvert {
 	}
 	
 	public List<Purchase> convertPurchasesDtoToPurchases(List<PurchaseDto> purchaseDtos){
+		if(purchaseDtos == null) {
+			return null;
+		}
+		
 		List<Purchase> purchases = new ArrayList<Purchase>();
 		
 		for(PurchaseDto purchaseDto : purchaseDtos) {

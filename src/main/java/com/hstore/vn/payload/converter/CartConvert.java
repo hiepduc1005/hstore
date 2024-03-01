@@ -18,6 +18,10 @@ public class CartConvert {
 	public ProductConvert productConvert;
 	
 	public Cart cartDtoConvertToCart(CartDto cartDto) {
+		if(cartDto == null) {
+			return null;
+		}
+		
 		Cart cart = new DefaultCart();
 		
 		cart.setProducts(productConvert.productsDtoConvertToProducts(cartDto.getProducts()));
@@ -27,6 +31,9 @@ public class CartConvert {
 	}
 	
 	public CartDto cartConvertToCartDto(Cart cart) {
+		if(cart == null) {
+			return null;
+		}
 		CartDto cartDto = new CartDto();
 		
 		cartDto.setProducts(productConvert.productsConvertToProductsDto(cart.getProducts()));
@@ -46,6 +53,9 @@ public class CartConvert {
 	}
 	
 	public List<CartDto> cartsConvertToCartDto(List<Cart> carts){
+		if(carts == null) {
+			return null;
+		}
 		List<CartDto> cartDtos = new ArrayList<CartDto>();
 		
 		for(Cart cart : carts) {
