@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,8 +53,8 @@ public class UserDto implements UserDetails {
 	@Column(name = "password")
 	public String password;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "users_roles", 	
+	@ManyToMany(fetch = FetchType.EAGER )
+	@JoinTable(name = "users_roles",	
 	           joinColumns = @JoinColumn(name = "user_id"),
 	           inverseJoinColumns = @JoinColumn(name = "role_id"))
 	public List<RoleDto> rolesDto;

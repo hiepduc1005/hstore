@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.payload.UserDto;
+import com.hstore.vn.payload.converter.RoleConvert;
 import com.hstore.vn.payload.converter.UserConvert;
+import com.hstore.vn.payload.request.UserIdRequest;
 import com.hstore.vn.payload.request.UserRequest;
+import com.hstore.vn.payload.request.UserRequestUpdate;
 import com.hstore.vn.payload.response.ApiResponse;
 import com.hstore.vn.payload.response.UserResponse;
 import com.hstore.vn.service.UserService;
@@ -34,6 +39,9 @@ public class UserController {
 	@Autowired
 	public UserConvert userConvert;
 	
+	@Autowired
+	public RoleConvert roleConvert;
+	
 	@PostMapping
 	public ApiResponse<ResponseEntity<String>> createUser(@RequestBody UserRequest userRequest){
 		
@@ -46,7 +54,7 @@ public class UserController {
 		userDto.setFirstName(userRequest.getFirstName());
 		userDto.setLastName(userRequest.getLastName());
 		userDto.setPassword(userRequest.getPassword());
-		userDto.setRoles(userRequest.getRoles());
+		userDto.setRoles(roleConvert.rolesRequestConvertToRolesDto(userRequest.getRoles()));
 		
 		userService.registerUser(userDto,"");
 		return new ApiResponse<ResponseEntity<String>>("Create user success!",
@@ -70,24 +78,32 @@ public class UserController {
 	}
 	
 	@PutMapping
-	public ApiResponse<ResponseEntity<?>> updateUser(@RequestBody UserRequest userRequest){
-		UserDto userDto = userDao.getUserByEmail(userRequest.getEmail());
-		userDto.setEmail(userRequest.getEmail());
-		userDto.setFirstName(userRequest.getFirstName());
-		userDto.setLastName(userRequest.getLastName());
-		userDto.setRoles(userRequest.getRoles());
+	public ApiResponse<ResponseEntity<String>> updateUser(@RequestBody UserRequestUpdate userRequestUpdate){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+	
+		UserDto userDto = userDao.getUserByEmail(username);
+		userDto.setEmail(userRequestUpdate.getEmail());
+		userDto.setFirstName(userRequestUpdate.getFirstName());
+		userDto.setLastName(userRequestUpdate.getLastName());
+		userDto.setRoles(roleConvert.rolesRequestConvertToRolesDto(userRequestUpdate.getRoles()));
+		userDto.setPhoneNum(userRequestUpdate.getPhoneNum());
+		userDto.setCreditNum(userRequestUpdate.getCardNum());
+		
+		
 		userService.updateUser(userConvert.userDtoConvertToUser(userDto));
 		
-		return new ApiResponse<ResponseEntity<?>>("Update user " + userRequest.getEmail() + " success!",
-				new ResponseEntity<>(HttpStatus.OK),0);
+		return new ApiResponse<ResponseEntity<String>>("Update user " + userRequestUpdate.getEmail() + " success!",
+				new ResponseEntity<String>(HttpStatus.OK),0);
 	}
 	
 	@DeleteMapping
-	public ApiResponse<ResponseEntity<?>> deleteUser(@RequestBody Integer id){
-		userService.deleteUser(id);
+	public ApiResponse<ResponseEntity<String>> deleteUser(@RequestBody UserIdRequest userIdRequest){
+		Integer userId = userIdRequest.getId();
+		userService.deleteUser(userId);
 		
-		return new ApiResponse<ResponseEntity<?>>("Delete user with id " + id + " success !",
-				new ResponseEntity<>(HttpStatus.OK),0);
+		return new ApiResponse<ResponseEntity<String>>("Delete user with id " + userId + " success !",
+				new ResponseEntity<String>(HttpStatus.OK),0);
 	}
 	
 	

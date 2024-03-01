@@ -20,13 +20,11 @@ public class JWTGenerator {
 		
 		public String generateToken(Authentication authentication) {
 			String username = authentication.getName();
-			Date currentDate = new Date();
-			Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
 			
 			String token = Jwts.builder()
 					.setSubject(username)
 					.setIssuedAt( new Date())
-					.setExpiration(expireDate)
+					.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.JWT_EXPIRATION))
 					.signWith(key,SignatureAlgorithm.HS512)
 					.compact();
 			System.out.println("New token :");

@@ -2,9 +2,9 @@ package com.hstore.vn.payload;
 
 import java.util.List;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,11 +23,11 @@ public class PurchaseDto {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Integer id;
 	
-	@ManyToOne
+	
 	@JoinColumn(name = "fk_user_id")
 	public UserDto user;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "purchases_products",
 	           joinColumns = @JoinColumn(name = "purchase_id"),
 	           inverseJoinColumns = @JoinColumn(name = "product_id"))

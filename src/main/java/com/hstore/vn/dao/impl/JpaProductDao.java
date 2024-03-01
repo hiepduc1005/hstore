@@ -204,12 +204,10 @@ public class JpaProductDao implements ProductDao{
 	@Override
 	@Modifying
 	public void deleteProduct(String uuid) {
-		TypedQuery<ProductDto> typedQuery =
-				em.createQuery("DELETE FROM product p WHERE p.guid = :uuid", ProductDto.class);
-		
-		typedQuery.setParameter("uuid", uuid);
-		
-		 int rowsAffected = typedQuery.executeUpdate();
+		Query query = em.createNativeQuery("DELETE FROM product p WHERE p.guid = :uuid");
+	    query.setParameter("uuid", uuid);
+	    		
+		 int rowsAffected = query.executeUpdate();
 	        if (rowsAffected == 0) {
 	            throw new DeleteProductFailuer("Failed to delete product with UUID: " + uuid);
 	        }

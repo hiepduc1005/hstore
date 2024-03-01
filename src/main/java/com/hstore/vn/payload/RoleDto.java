@@ -2,6 +2,7 @@ package com.hstore.vn.payload;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,10 +31,6 @@ public class RoleDto {
 	           inverseJoinColumns = @JoinColumn(name = "privilege_id"))
 	public List<PrivilegeDto> privileges;
 	
-	@ManyToMany(mappedBy = "rolesDto" )
-	public List<UserDto> users;
-	
-	
 	public Integer getId() {
 		return id;
 	}
@@ -51,12 +48,6 @@ public class RoleDto {
 	}
 	public void setPrivileges(List<PrivilegeDto> privileges) {
 		this.privileges = privileges;
-	}
-	public List<UserDto> getUsers() {
-		return users;
-	}
-	public void setUsers(List<UserDto> users) {
-		this.users = users;
 	}
 	
 	

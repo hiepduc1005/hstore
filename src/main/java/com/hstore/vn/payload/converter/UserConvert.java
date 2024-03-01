@@ -66,6 +66,8 @@ public class UserConvert {
 			userDto.setReffererUser(userConvertToUserDto(user.getReffererUser()));
 		}
 		userDto.setPassword(user.getPassword());
+		userDto.setCart(cartConvert.cartConvertToCartDto(user.getCart()));
+
 		
 		
 		return userDto;
@@ -86,6 +88,10 @@ public class UserConvert {
 	}
 	
 	public UserResponse userDtoConvertToUserResponse(UserDto userDto) {
+		if(userDto == null) {
+			return null;
+		}
+		
 		UserResponse userResponse = new UserResponse(
 				userDto.getId(),
 				userDto.getFirstName(),

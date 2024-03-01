@@ -3,15 +3,21 @@ package com.hstore.vn.payload.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hstore.vn.dao.PrivilegeDao;
 import com.hstore.vn.entity.Privilege;
 import com.hstore.vn.entity.impl.DefaultPrivilege;
 import com.hstore.vn.payload.PrivilegeDto;
+import com.hstore.vn.payload.request.PrivilegeRequest;
 
 
 @Service
 public class PrivilegeConvert {
+	
+	@Autowired
+	public PrivilegeDao privilegeDao;
 	
 	public Privilege privilegeDtoConvertToPrivilege(PrivilegeDto privilegeDto) {
 		if(privilegeDto == null) {
@@ -68,6 +74,26 @@ public class PrivilegeConvert {
 		}
 		
 		return privilegeDtos;
+	}
+	
+	public PrivilegeDto privilegeRequestConvertToPrivilegeDto(PrivilegeRequest privilegeRequest) {
+		PrivilegeDto privilegeDto = privilegeDao.getPrivilegeByName(privilegeRequest.getName());
+		
+		return privilegeDto;
+	}
+	
+	public List<PrivilegeDto> privilegesRequestConvertToPrivilegesDto(List<PrivilegeRequest> privilegeRequests){
+		List<PrivilegeDto> privileges = new ArrayList<PrivilegeDto>();
+		
+		for(PrivilegeRequest privilegeRequest : privilegeRequests) {
+			privileges.add(privilegeRequestConvertToPrivilegeDto(privilegeRequest));
+		}
+		
+		return privileges;
+		
+//		return privilegeRequests.stream()
+//				.map(this :: privilegeRequestConvertToPrivilegeDto )
+//				.collect(Collectors.toList());
 	}
 
 }

@@ -11,6 +11,7 @@ import com.hstore.vn.exception.user.UserNotFoundException;
 import com.hstore.vn.payload.UserDto;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
@@ -64,6 +65,11 @@ public class JpaUserDao implements UserDao {
 	public List<UserDto> getAllUsers() {
 		TypedQuery<UserDto> typedQuery = em.createQuery("SELECT u FROM user u",UserDto.class);
 		List<UserDto> userDtos = typedQuery.getResultList();
+		
+		if(userDtos == null) {
+	    	throw new UserNotFoundException("Can not found any user");
+	    }
+		
 		return userDtos;
 	}
 
@@ -88,12 +94,11 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
-		TypedQuery<UserDto> typedQuery =
-				em.createQuery("DELETE FROM user u WHERE u.id = :id" , UserDto.class);
+		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , UserDto.class);
 		
-		typedQuery.setParameter("id", id);
+		query.setParameter("id", id);
 		
-		 int rowsAffected = typedQuery.executeUpdate();
+		 int rowsAffected = query.executeUpdate();
 	        if (rowsAffected == 0) {
 	        	throw new UserNotFoundException("User with id " + id + " not found.");
 	        }

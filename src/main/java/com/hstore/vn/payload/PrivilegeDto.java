@@ -1,13 +1,11 @@
 package com.hstore.vn.payload;
 
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = "privilege")
@@ -21,8 +19,8 @@ public class PrivilegeDto {
 	@Column(name = "privilege_name")
 	public String name;
 	
-	@ManyToMany(mappedBy = "privileges")
-	public List<RoleDto> roles;
+//	@ManyToMany(mappedBy = "privileges")
+//	public List<RoleDto> roles;
 	
 	public Integer getId() {
 		return id;
@@ -36,13 +34,7 @@ public class PrivilegeDto {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<RoleDto> getRoles() {
-		return roles;
-	}
-	public void setRoles(List<RoleDto> roles) {
-		this.roles = roles;
-	}
-	
+		
 	
 
 }

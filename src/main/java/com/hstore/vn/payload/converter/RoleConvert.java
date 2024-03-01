@@ -6,9 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.entity.Role;
 import com.hstore.vn.entity.impl.DefaultRole;
 import com.hstore.vn.payload.RoleDto;
+import com.hstore.vn.payload.request.RoleRequest;
 
 
 
@@ -17,6 +19,9 @@ public class RoleConvert {
 	
 	@Autowired
 	public PrivilegeConvert privilegeConvert;
+	
+	@Autowired
+	public RoleDao roleDao;
 	
 	public Role roleDtoConvertToRole(RoleDto roleDto) {
 		if(roleDto == null) {
@@ -75,5 +80,22 @@ public class RoleConvert {
 		return rolesDto;
 	}
 	
+	
+	public RoleDto roleRequestConvertToRoleDto(RoleRequest roleRequest) {
+		RoleDto roleDto =roleDao.getRoleByName(roleRequest.getName());
+		
+		return roleDto;
+	}
+	
+	public List<RoleDto> rolesRequestConvertToRolesDto(List<RoleRequest> roleRequests){
+		List<RoleDto> rolesDto = new ArrayList<RoleDto>();
+		
+		for(RoleRequest roleRequest : roleRequests) {
+			rolesDto.add(roleRequestConvertToRoleDto(roleRequest));
+		}
+		
+		return rolesDto;
+		
+	}
 
 }

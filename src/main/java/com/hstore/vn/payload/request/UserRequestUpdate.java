@@ -2,14 +2,27 @@ package com.hstore.vn.payload.request;
 
 import java.util.List;
 
-
-public class UserRequest {
+public class UserRequestUpdate {
 	
 	public String firstName;
 	public String lastName;
 	public String email;
-	public String password;
 	public List<RoleRequest> roles;
+	public String phoneNum;
+	public String cardNum;
+	
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+	public String getCardNum() {
+		return cardNum;
+	}
+	public void setCardNum(String cardNum) {
+		this.cardNum = cardNum;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -28,30 +41,27 @@ public class UserRequest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	
 	public List<RoleRequest> getRoles() {
 		return roles;
 	}
 	public void setRoles(List<RoleRequest> roles) {
 		this.roles = roles;
 	}
-	public UserRequest(String firstName, String lastName, String email, String password, List<RoleRequest> roles) {
-		
+	
+	public UserRequestUpdate(String firstName, String lastName, String email, List<RoleRequest> roles, String phoneNum,
+			String cardNum) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.password = password;
 		this.roles = roles;
-	}
-	public UserRequest() {
-		
+		this.phoneNum = phoneNum;
+		this.cardNum = cardNum;
 	}
 	
+	public UserRequestUpdate() {
+		
+	}
 	
 
 }

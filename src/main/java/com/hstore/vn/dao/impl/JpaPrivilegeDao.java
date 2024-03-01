@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.PrivilegeDao;
+import com.hstore.vn.exception.privilege.PrivilegeNotFoundException;
 import com.hstore.vn.payload.PrivilegeDto;
 
 import jakarta.persistence.EntityManager;
@@ -31,6 +32,10 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 		
 		typedQuery.setParameter("name",name);
 		PrivilegeDto privilegeDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+
+		if(privilegeDto == null) {
+			throw new PrivilegeNotFoundException("Can not found privilege with name : " + name);
+		}
 		
 		return privilegeDto;
 	}
@@ -39,6 +44,11 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 	@Override
 	public PrivilegeDto getPrivilegeById(Integer id) {
 		PrivilegeDto privilegeDto = entityManager.find(PrivilegeDto.class, id);
+		
+		if(privilegeDto == null) {
+			throw new PrivilegeNotFoundException("Can not found privilege with name : " + id);
+		}
+		
 		return privilegeDto;
 	}
 

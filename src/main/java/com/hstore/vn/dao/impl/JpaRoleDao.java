@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.RoleDao;
+import com.hstore.vn.exception.privilege.PrivilegeNotFoundException;
 import com.hstore.vn.payload.RoleDto;
 
 import jakarta.persistence.EntityManager;
@@ -26,6 +27,11 @@ public class JpaRoleDao implements RoleDao{
 	@Override
 	public RoleDto getRoleById(Integer id) {
 		RoleDto roleDto = entityManager.find(RoleDto.class, id);
+		
+		if(roleDto == null) {
+			throw new PrivilegeNotFoundException("Can not found role with name : " + id);
+		}
+		
 		return roleDto;
 	}
 
@@ -35,6 +41,11 @@ public class JpaRoleDao implements RoleDao{
 		TypedQuery<RoleDto> typedQuery = entityManager.createQuery("SELECT r FROM role r WHERE r.name = :name",RoleDto.class);
 		typedQuery.setParameter("name", name);
 	    RoleDto roleDto	= typedQuery.getResultList().stream().findFirst().orElse(null);
+	    
+	    if(roleDto == null) {
+			throw new PrivilegeNotFoundException("Can not found role with name : " + name);
+		}
+	    
 		return roleDto;
 	}
 
