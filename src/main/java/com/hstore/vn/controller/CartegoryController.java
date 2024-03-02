@@ -22,7 +22,7 @@ import com.hstore.vn.payload.response.CategoryResponse;
 import com.hstore.vn.service.CategoryService;
 
 @RestController
-@RequestMapping(path = "api/v1/category")
+@RequestMapping(path = "/api/v1/category")
 public class CartegoryController {
 	
 	@Autowired

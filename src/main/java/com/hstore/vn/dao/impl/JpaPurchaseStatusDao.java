@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.PurchaseStatusDao;
+import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
 import com.hstore.vn.payload.PurchaseStatusDto;
 
 import jakarta.persistence.EntityManager;
@@ -19,8 +20,14 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 	@Transactional
 	@Override
 	public PurchaseStatusDto getPurchaseStatusById(Integer id) {
-		PurchaseStatusDto PurchaseStatusDto = entityManager.find(PurchaseStatusDto.class, id);
-		return PurchaseStatusDto;
+		if(id == null || id < 1) {
+			throw new IllegalArgumentException("Purchase id must be type int");
+		}
+		PurchaseStatusDto purchaseStatusDto = entityManager.find(PurchaseStatusDto.class, id);
+		if(purchaseStatusDto == null) {
+			throw new PurchaseStatusNotFoundException("Can not found status with id : " + id );
+		}
+		return purchaseStatusDto;
 	}
 
 	@Transactional
@@ -31,7 +38,9 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 		
 		typedQuery.setParameter("statusName", statusName);
 		PurchaseStatusDto purchaseStatusDto = typedQuery.getResultList().stream().findFirst().orElse(null);
-		
+		if(purchaseStatusDto == null) {
+			throw new PurchaseStatusNotFoundException("Can not found status with name : " + statusName);
+		}
 		return purchaseStatusDto;
 	}
 

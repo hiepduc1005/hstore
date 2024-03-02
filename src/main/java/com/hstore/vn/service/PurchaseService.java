@@ -7,10 +7,18 @@ import com.hstore.vn.entity.Purchase;
 
 public interface PurchaseService {
 	
-	void savePurchase(Purchase Purchase);
+	Purchase savePurchase(Purchase Purchase);
 	
 	List<Purchase> getNotCompletePurchaseBy(Integer completedPurchaseStatusId);
 	
-	void updateStatusPurchaseByPurchaseIdUpToOneStage(Integer purchaseId);
+	Purchase updateStatusPurchaseByPurchaseIdUpToOneStage(Integer purchaseId);
+	
+	Purchase getPurchaseById(Integer id);
+	
+	List<Purchase> getPurchaseByUserAuthenticated();
+	
+	void deletePurchase(Integer purchaseId);
+	
+	void updatePurchase(Purchase purchase);
 
 }

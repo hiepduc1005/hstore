@@ -3,7 +3,6 @@ package com.hstore.vn.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -16,6 +15,10 @@ import com.hstore.vn.exception.product.CreateProductFailuerException;
 import com.hstore.vn.exception.product.DeleteProductFailuer;
 import com.hstore.vn.exception.product.NotFoundProductException;
 import com.hstore.vn.exception.product.UpdateProductFailuer;
+import com.hstore.vn.exception.purchase.CreatePurchaseFailure;
+import com.hstore.vn.exception.purchase.DeletePurchaseFailure;
+import com.hstore.vn.exception.purchase.PurchaseNotFoundException;
+import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
 import com.hstore.vn.exception.role.RoleNotFoundException;
 import com.hstore.vn.exception.user.CreateUserFailureException;
 import com.hstore.vn.exception.user.UserNotFoundException;
@@ -102,6 +105,34 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = PrivilegeNotFoundException.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePrivilegeNotFound(PrivilegeNotFoundException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+	
+	@ExceptionHandler(value = PurchaseNotFoundException.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePurchaseNotFound(PurchaseNotFoundException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+	
+	@ExceptionHandler(value = DeletePurchaseFailure.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleDeletePurchaseFailure(DeletePurchaseFailure ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+	
+	@ExceptionHandler(value = CreatePurchaseFailure.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleCreatePurchaseFailure(CreatePurchaseFailure ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+	
+	@ExceptionHandler(value = PurchaseStatusNotFoundException.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePurchaseStatusNotFound(PurchaseStatusNotFoundException ex) {
         ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);

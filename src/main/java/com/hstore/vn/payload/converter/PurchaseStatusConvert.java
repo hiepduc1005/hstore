@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.hstore.vn.entity.PurchaseStatus;
 import com.hstore.vn.entity.impl.DefaultPurchaseStatus;
 import com.hstore.vn.payload.PurchaseStatusDto;
+import com.hstore.vn.payload.response.PurchaseStatusResponse;
 
 
 @Service
@@ -34,5 +35,13 @@ public class PurchaseStatusConvert {
 		orderStatusDto.setStatusName(orderStatus.getStatusName());
 		
 		return orderStatusDto;
+	}
+	public PurchaseStatusResponse purchaseStatusConvertToPurchaseStatusResponse(PurchaseStatus purchaseStatus) {
+		PurchaseStatusResponse purchaseStatusResponse = 
+				new PurchaseStatusResponse(
+						purchaseStatus.getPurchaseStatusId(),
+						purchaseStatus.getStatusName()
+						);
+		return purchaseStatusResponse;
 	}
 }

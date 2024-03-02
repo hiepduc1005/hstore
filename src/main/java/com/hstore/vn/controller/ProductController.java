@@ -27,7 +27,7 @@ import com.hstore.vn.payload.response.ProductResponse;
 import com.hstore.vn.service.ProductService;
 
 @RestController
-@RequestMapping("api/v1/product")
+@RequestMapping("/api/v1/product")
 public class ProductController {
 	
 	@Autowired

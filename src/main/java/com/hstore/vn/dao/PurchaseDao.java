@@ -19,6 +19,7 @@ public interface PurchaseDao {
 	
 	List<PurchaseDto> getNotCompletedPurchases(Integer completedPurchaseStatusId);
 	
+	void deletePurchaseById(Integer purchaseId);
 	
 
 }

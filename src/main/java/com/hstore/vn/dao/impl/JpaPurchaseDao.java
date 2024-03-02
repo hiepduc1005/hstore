@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.PurchaseDao;
+import com.hstore.vn.exception.purchase.DeletePurchaseFailure;
+import com.hstore.vn.exception.purchase.PurchaseNotFoundException;
 import com.hstore.vn.payload.PurchaseDto;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
@@ -35,18 +38,36 @@ public class JpaPurchaseDao implements PurchaseDao{
 	@Transactional
 	@Override
 	public PurchaseDto getPurchaseById(Integer id) {
-		PurchaseDto PurchaseDto = entityManager.find(PurchaseDto.class, id);
-		return PurchaseDto;
+		if(id == null || id < 1) {
+			throw new IllegalArgumentException("Purchase id must be type int");
+		}
+		PurchaseDto purchaseDto = entityManager.find(PurchaseDto.class, id);
+		if(purchaseDto == null) {
+			throw new PurchaseNotFoundException("Can not found purchase with id : " + id);
+		}
+		return purchaseDto;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<PurchaseDto> getPurchasesByUserId(Integer userId) {
-		TypedQuery<PurchaseDto> typedQuery = entityManager.createQuery("SELECT o FROM purchase o"
-				+ " WHERE o.user.id = :userId ",PurchaseDto.class);
 		
-		typedQuery.setParameter("userId", userId);
-		List<PurchaseDto> purchaseDtos = typedQuery.getResultList();
+		if(userId == null || userId < 1) {
+			throw new IllegalArgumentException("User id must be type int");
+		}
+		
+		Query query = entityManager.createNativeQuery(
+				"SELECT * FROM purchase WHERE fk_user_id = :userId",PurchaseDto.class);
+		
+		query.setParameter("userId", userId);
+		List<PurchaseDto> purchaseDtos = query.getResultList();
+		
+		if(purchaseDtos == null || purchaseDtos.isEmpty()) {
+			throw new PurchaseNotFoundException("Can't found any purchase");
+		}
+		
+		
 		return purchaseDtos;
 	}
 
@@ -55,18 +76,53 @@ public class JpaPurchaseDao implements PurchaseDao{
 	public List<PurchaseDto> getAllPurchases() {
 		TypedQuery<PurchaseDto> typedQuery = entityManager.createQuery("SELECT o FROM purchase o",PurchaseDto.class);
 		List<PurchaseDto> purchaseDtos = typedQuery.getResultList();
+		
+		if(purchaseDtos == null || purchaseDtos.isEmpty()) {
+			throw new PurchaseNotFoundException("Can't found any purchase");
+		}
+		
 		return purchaseDtos;
 	}
 
 	@Transactional
 	@Override
 	public List<PurchaseDto> getNotCompletedPurchases(Integer completedPurchaseStatusId) {
+		
+		if(completedPurchaseStatusId == null || completedPurchaseStatusId < 1) {
+			throw new IllegalArgumentException("Purchase Status id must be type int");
+		}
+		
 		TypedQuery<PurchaseDto> typedQuery = entityManager.createQuery("SELECT o FROM purchase o"
 				+ " WHERE o.purchaseStatus.id != :completedPurchaseStatusId ",PurchaseDto.class);
 		
 		typedQuery.setParameter("completedPurchaseStatusId", completedPurchaseStatusId);
 		List<PurchaseDto> purchaseDtos = typedQuery.getResultList();
 		return purchaseDtos;
+	}
+
+	@Override
+	public void deletePurchaseById(Integer purchaseId) {
+		if(purchaseId == null || purchaseId < 1) {
+			throw new IllegalArgumentException("Purchase id must be type int");
+		}
+		if(getPurchaseById(purchaseId) == null) {
+			throw new PurchaseNotFoundException("Can not found purchase with id " + purchaseId);
+		}
+		
+		Query queryDeleteFKPruchaseId = 
+				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
+		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
+		queryDeleteFKPruchaseId.executeUpdate();
+		
+		Query query = entityManager.createNativeQuery("DELETE FROM purchase p WHERE p.id = :id ");
+		query.setParameter("id", purchaseId);
+		int rowEffect = query.executeUpdate();
+		
+		if(rowEffect < 1 ) {
+			throw new DeletePurchaseFailure("Delete purchase id : " + purchaseId + " failed");
+		}
+		
+		
 	}
 
 }

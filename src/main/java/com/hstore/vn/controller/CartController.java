@@ -26,7 +26,7 @@ import com.hstore.vn.service.ProductService;
 import com.hstore.vn.service.UserService;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/api/v1")
 public class CartController {
 	
 	@Autowired
