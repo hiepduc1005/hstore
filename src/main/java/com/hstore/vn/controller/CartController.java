@@ -67,7 +67,7 @@ public class CartController {
 		BigDecimal totalPrice = cartService.getTotalPriceInCartByAuthenticatedUser();
 		
 		return new ApiResponse<ResponseEntity<TotalPriceResponse>>(
-				"Get total price in user with email : + " + username + " success !",
+				"Get total price in user with email : " + username + " success !",
 				new ResponseEntity<TotalPriceResponse>(new TotalPriceResponse(totalPrice),
 				HttpStatus.OK),0);
 	}

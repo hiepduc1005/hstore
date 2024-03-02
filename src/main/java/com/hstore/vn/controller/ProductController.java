@@ -17,30 +17,37 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.exception.product.NotFoundProductException;
+import com.hstore.vn.payload.converter.CategoryConvert;
 import com.hstore.vn.payload.converter.ProductConvert;
 import com.hstore.vn.payload.request.ProductRequest;
+import com.hstore.vn.payload.request.ProductRequestUpdate;
 import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.service.impl.DefaultProductService;
+import com.hstore.vn.payload.response.CategoryResponse;
+import com.hstore.vn.payload.response.ProductResponse;
+import com.hstore.vn.service.ProductService;
 
 @RestController
 @RequestMapping("api/v1/product")
 public class ProductController {
 	
 	@Autowired
-	public DefaultProductService productService;
+	public ProductService productService;
 	
 	@Autowired
 	public ProductConvert productConvert;
 	
+	@Autowired
+	public CategoryConvert categoryConvert;
+	
 	@GetMapping("/all")
-	public ApiResponse<ResponseEntity<List<Product>>> getProducts(){
-		List<Product> productDtos =  productService.getAllProduct();
-		if(productDtos.isEmpty()) {
-			throw new NotFoundProductException("Not found any product");
-		}
-		ResponseEntity<List<Product>> re = new ResponseEntity<List<Product>>(productDtos, HttpStatus.OK);
-		ApiResponse<ResponseEntity<List<Product>>> apiResponse =
-				new ApiResponse<ResponseEntity<List<Product>>>(
+	public ApiResponse<ResponseEntity<List<ProductResponse>>> getProducts(){
+		List<Product> products =  productService.getAllProduct();	
+		
+		List<ProductResponse> productResponses = productConvert.productsConverToProductsResponse(products);
+		
+		ResponseEntity<List<ProductResponse>> re = new ResponseEntity<List<ProductResponse>>(productResponses, HttpStatus.OK);
+		ApiResponse<ResponseEntity<List<ProductResponse>>> apiResponse =
+				new ApiResponse<ResponseEntity<List<ProductResponse>>>(
 						"Get all products successful", re, 0);
 		
 		return apiResponse;
@@ -48,15 +55,17 @@ public class ProductController {
 	
 	
 	@GetMapping("/{uuid}")
-	public ApiResponse<ResponseEntity<Product>> getProductByUuid(@PathVariable String uuid){
+	public ApiResponse<ResponseEntity<ProductResponse>> getProductByUuid(@PathVariable String uuid){
 		Product product = productService.getProductByGuid(uuid);
 		if(product == null) {
 			throw new NotFoundProductException("Not found product with uuid : " + uuid);
 		}
 		
-		ResponseEntity<Product> re = new ResponseEntity<Product>(product , HttpStatus.OK);
-		ApiResponse<ResponseEntity<Product>> apiResponse =
-				new ApiResponse<ResponseEntity<Product>>(
+		ProductResponse productResponse = productConvert.productConverToProductResponse(product);
+		
+		ResponseEntity<ProductResponse> re = new ResponseEntity<ProductResponse>(productResponse , HttpStatus.OK);
+		ApiResponse<ResponseEntity<ProductResponse>> apiResponse =
+				new ApiResponse<ResponseEntity<ProductResponse>>(
 						"Get product successful", re, 0);
 		
 		return apiResponse;
@@ -64,7 +73,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/category/{categoryId}")
-	public ApiResponse<ResponseEntity<List<Product>>> getProductsByCategoryWithPageAndLimit(
+	public ApiResponse<ResponseEntity<List<ProductResponse>>> getProductsByCategoryWithPageAndLimit(
 			@PathVariable Integer categoryId,
 			@RequestParam(defaultValue = "1" , required = false) Integer pageNumber ,
 			@RequestParam(defaultValue = "10" , required = false) Integer limitProduct)
@@ -72,13 +81,15 @@ public class ProductController {
 		
 		List<Product> products = productService.getProductsByCategoryForPageWithLimit(categoryId, pageNumber, limitProduct);
 		
-		return new ApiResponse<ResponseEntity<List<Product>>>(
+		List<ProductResponse> productResponses = productConvert.productsConverToProductsResponse(products);
+		
+		return new ApiResponse<ResponseEntity<List<ProductResponse>>>(
 				"Get product with category id : " + categoryId + " and page = " + pageNumber + " , limit = " + limitProduct + " success !",
-				new ResponseEntity<List<Product>>(products , HttpStatus.OK),0);
+				new ResponseEntity<List<ProductResponse>>(productResponses , HttpStatus.OK),0);
 	}
 	
 	@GetMapping
-	public ApiResponse<ResponseEntity<List<Product>>> getProductsBySearchWithPageAndLimit(
+	public ApiResponse<ResponseEntity<List<ProductResponse>>> getProductsBySearchWithPageAndLimit(
 			@RequestParam(required = true,defaultValue = "") String searchQuery ,
 			@RequestParam(required = false,defaultValue = "1") Integer pageNumber ,
 			@RequestParam(required = false , defaultValue = "10") Integer limit
@@ -86,55 +97,73 @@ public class ProductController {
 	{
 		List<Product> products = productService.getProductsLikeNameForPageWithLimit(searchQuery, pageNumber, limit);
 		
-		return new ApiResponse<ResponseEntity<List<Product>>>(
+		List<ProductResponse> productResponses = productConvert.productsConverToProductsResponse(products);
+
+		
+		return new ApiResponse<ResponseEntity<List<ProductResponse>>>(
 				"Get product with search query : " + searchQuery + " and page = " + pageNumber + " , limit = " + limit + " success !",
-				new ResponseEntity<List<Product>>(products , HttpStatus.OK),0);
+				new ResponseEntity<List<ProductResponse>>(productResponses , HttpStatus.OK),0);
 	}
 	
 	@PostMapping
-	public ApiResponse<ResponseEntity<Product>> postProduct(
+	public ApiResponse<ResponseEntity<ProductResponse>> postProduct(
 			@RequestBody ProductRequest productRequest ){
 		
 		Product product = productConvert.productRequestConvertToProduct(productRequest);
 		
 		productService.saveProduct(product);
-	
-		ResponseEntity<Product> re = new ResponseEntity<Product>(product,HttpStatus.ACCEPTED);
 		
-		ApiResponse<ResponseEntity<Product>> apiResponse =
-				new ApiResponse<ResponseEntity<Product>>("Create product successful", re, 0);
+		CategoryResponse categoryResponse = categoryConvert.categoryConvertToCategoryResponse(product.getCategory());
+	
+		ResponseEntity<ProductResponse> re = new ResponseEntity<ProductResponse>(
+				new ProductResponse(
+						product.getProductId(),
+						product.getProductName(),
+						categoryResponse,
+						product.getPrice(),
+						product.getProductDescription(),
+						product.getImg(),
+						product.getProductGUID()
+						),
+				HttpStatus.ACCEPTED);
+		
+		ApiResponse<ResponseEntity<ProductResponse>> apiResponse =
+				new ApiResponse<ResponseEntity<ProductResponse>>("Create product successful", re, 0);
 		
 		return apiResponse;
 		
 	}
 	
 	@PutMapping
-	public ApiResponse<ResponseEntity<Product>> putProduct(
-			@RequestBody ProductRequest productRequest ){
+	public ApiResponse<ResponseEntity<ProductResponse>> putProduct(
+			@RequestBody ProductRequestUpdate productRequestUpdate ){
 		
-		Product product = productConvert.productRequestConvertToProduct(productRequest);
+		Product product = productConvert.productRequestUpdateConvertToProduct(productRequestUpdate);
 		
 		
 		productService.updateProduct(product);
-			
-		ResponseEntity<Product> re = new ResponseEntity<Product>(product,HttpStatus.ACCEPTED);
 		
-		ApiResponse<ResponseEntity<Product>> apiResponse =
-				new ApiResponse<ResponseEntity<Product>>("Create product successful", re, 0);
+		ProductResponse productResponse = productConvert.productConverToProductResponse(product);
+			
+		ResponseEntity<ProductResponse> re = new ResponseEntity<ProductResponse>(productResponse,HttpStatus.OK);
+		
+		ApiResponse<ResponseEntity<ProductResponse>> apiResponse =
+				new ApiResponse<ResponseEntity<ProductResponse>>(
+						"Update product with id " + product.getProductId() + " successful", re, 0);
 		
 		return apiResponse;
 		
 	}
 	
 	@DeleteMapping("/{uuid}")
-	public ApiResponse<ResponseEntity<String>> deleteProduct (@PathVariable String uuid){
+	public ApiResponse<ResponseEntity<?>> deleteProduct (@PathVariable String uuid){
 		productService.deleteProduct(uuid);
 		
-		ResponseEntity<String> responseEntity =
-				new ResponseEntity<String>(uuid, HttpStatus.OK);
+		ResponseEntity<?> responseEntity =
+				new ResponseEntity<>(HttpStatus.OK);
 		
-		ApiResponse<ResponseEntity<String>> apiResponse = 
-				new ApiResponse<ResponseEntity<String>>(
+		ApiResponse<ResponseEntity<?>> apiResponse = 
+				new ApiResponse<ResponseEntity<?>>(
 						"Delete user with uuid : " + uuid + " success!", responseEntity, 0);
 		
 		return apiResponse;

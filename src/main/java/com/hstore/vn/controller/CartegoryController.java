@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.entity.Category;
+import com.hstore.vn.entity.impl.DefaultCategory;
+import com.hstore.vn.payload.converter.CategoryConvert;
+import com.hstore.vn.payload.request.CategoryRequest;
 import com.hstore.vn.payload.response.ApiResponse;
+import com.hstore.vn.payload.response.CategoryResponse;
 import com.hstore.vn.service.CategoryService;
 
 @RestController
@@ -24,30 +28,38 @@ public class CartegoryController {
 	@Autowired
 	public CategoryService categoryService;
 	
+	@Autowired
+	public CategoryConvert categoryConvert;
+	
 	
 	@GetMapping("/all")
-	public ApiResponse<ResponseEntity<List<Category>>> getAllCategories(){
+	public ApiResponse<ResponseEntity<List<CategoryResponse>>> getAllCategories(){
 		List<Category> categories = categoryService.getAllCategories();
 		
-		return new ApiResponse<ResponseEntity<List<Category>>>(
+		
+		return new ApiResponse<ResponseEntity<List<CategoryResponse>>>(
 				"Get all categories success !",
-				new ResponseEntity<List<Category>>(categories, HttpStatus.OK),0);
+				new ResponseEntity<List<CategoryResponse>>(
+						categoryConvert.categoriesConvertToCategoriesResponse(categories),
+						HttpStatus.OK),0);
 	}
 	
 	@GetMapping("/{id}")
-	public ApiResponse<ResponseEntity<Category>> getCategory(@PathVariable Integer id){
+	public ApiResponse<ResponseEntity<CategoryResponse>> getCategory(@PathVariable Integer id){
 		Category category = categoryService.getCategoryById(id);
-		
-		return new ApiResponse<ResponseEntity<Category>>(
-				"Get category success !",
-				new ResponseEntity<Category>(category, HttpStatus.OK),0);
+		CategoryResponse categoryResponse = categoryConvert.categoryConvertToCategoryResponse(category);
+		return new ApiResponse<ResponseEntity<CategoryResponse>>(
+				"Get category with id " + id + " success !",
+				new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK),0);
 	}
 	
 	@PostMapping
-	public ApiResponse<ResponseEntity<String>> postCategory(@RequestBody Category category){
+	public ApiResponse<ResponseEntity<String>> postCategory(@RequestBody CategoryRequest categoryRequest){
+		Category category = new DefaultCategory();
+		category.setCategoryName(categoryRequest.getName());
 		categoryService.createCategory(category);
 		
-		return new ApiResponse<ResponseEntity<String>>("Create category success!",
+		return new ApiResponse<ResponseEntity<String>>("Create category  success!",
 				new ResponseEntity<>(HttpStatus.OK),0);
 	}
 	

@@ -11,6 +11,7 @@ import com.hstore.vn.entity.Category;
 import com.hstore.vn.entity.impl.DefaultCategory;
 import com.hstore.vn.payload.CategoryDto;
 import com.hstore.vn.payload.request.CategoryRequest;
+import com.hstore.vn.payload.response.CategoryResponse;
 
 
 
@@ -77,6 +78,26 @@ public class CategoryConvert {
 	public Category categoryRequestConvertToCategory(CategoryRequest categoryRequest) {
 		CategoryDto categoryDto =categoryDao.getCategoryByName(categoryRequest.getName());
 		return categoryDtoConvertToCategory(categoryDto);
+	}
+	
+	public CategoryResponse categoryConvertToCategoryResponse(Category category) {
+		CategoryResponse categoryResponse = 
+				new CategoryResponse(
+						category.getCategoryId(),
+						category.getCategoryName()
+						);
+		
+		return categoryResponse;
+	}
+	
+	public List<CategoryResponse> categoriesConvertToCategoriesResponse(List<Category> categories){
+		List<CategoryResponse> categoryResponses = new ArrayList<CategoryResponse>();
+		
+		for(Category category : categories) {
+			categoryResponses.add(categoryConvertToCategoryResponse(category));
+		}
+		
+		return categoryResponses;
 	}
 
 

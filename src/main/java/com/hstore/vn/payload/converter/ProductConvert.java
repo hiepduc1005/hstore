@@ -6,11 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.entity.Category;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.impl.DefaultProduct;
 import com.hstore.vn.payload.ProductDto;
 import com.hstore.vn.payload.request.ProductRequest;
+import com.hstore.vn.payload.request.ProductRequestUpdate;
+import com.hstore.vn.payload.response.ProductResponse;
 import com.hstore.vn.service.CategoryService;
 
 
@@ -24,23 +27,34 @@ public class ProductConvert {
 	@Autowired
 	public CategoryService categoryService;
 	
-	public Product productDtoConvertToProduct(ProductDto productDto) {
-		Product product = new DefaultProduct();
-		if(productDto != null) {
-			product.setCategory(categoryConvert.categoryDtoConvertToCategory(productDto.getCategory()));	
-			product.setImg(productDto.getImgName());
-			product.setPrice(productDto.getPrice());
-			product.setProductDescription(productDto.getDescription());
-			product.setProductGUID(productDto.getGuid());
-			product.setProductId(productDto.getId());
-			product.setProductName(productDto.getName());
+	@Autowired
+	public ProductDao productDao;
+	
+	public Product productDtoConvertToProduct(ProductDto productDto) {	
+		if(productDto == null) {
+			return null;
 		}
-		return null;
+		
+		Product product = new DefaultProduct();
+
+		product.setCategory(categoryConvert.categoryDtoConvertToCategory(productDto.getCategory()));	
+		product.setImg(productDto.getImgName());
+		product.setPrice(productDto.getPrice());
+		product.setProductDescription(productDto.getDescription());
+		product.setProductGUID(productDto.getGuid());
+		product.setProductId(productDto.getId());
+		product.setProductName(productDto.getName());
+		
+		return product;
 	}
 	
 	public ProductDto productConvertToProductDto(Product product) {
+		if(product == null) {
+			return null;
+		}
+		
 		ProductDto productDto = new ProductDto();
-		if(product != null) {
+		
 		  productDto.setCategory(categoryConvert.categoryConvertToCategoryDto(product.getCategory()));
 		  productDto.setImgName(product.getImg());
 		  productDto.setPrice(product.getPrice());
@@ -48,10 +62,10 @@ public class ProductConvert {
 		  productDto.setGuid(product.getProductGUID());
 		  productDto.setId(product.getProductId());
 		  productDto.setName(product.getProductName());
-		}
+	
 		
 		
-		return null;
+		return productDto;
 	}
 	
 	public List<Product> productsDtoConvertToProducts(List<ProductDto> productDtos){
@@ -94,6 +108,49 @@ public class ProductConvert {
 		
 		
 		return product;
+	}
+	
+	public Product productRequestUpdateConvertToProduct(ProductRequestUpdate productRequestUpdate) {
+		Category category = categoryService.getCategoryByName(productRequestUpdate.getCategory().getName());
+		
+		Product product = productDtoConvertToProduct(productDao.getProductById(productRequestUpdate.getId()));
+		product.setProductName(productRequestUpdate.getName());
+		product.setProductDescription(productRequestUpdate.getDescription());
+		product.setImg(productRequestUpdate.getImgName());
+		product.setPrice(productRequestUpdate.getPrice());
+		product.setCategory(category);
+		
+		
+		return product;
+	}
+	
+	public ProductResponse productConverToProductResponse(Product product) {
+		if(product == null) {
+			return null;
+		}
+		
+		ProductResponse productResponse = 
+				new ProductResponse(
+						product.getProductId(),
+						product.getProductName(),
+						categoryConvert.categoryConvertToCategoryResponse( product.getCategory()),
+						product.getPrice(),
+						product.getProductDescription(),
+						product.getImg(),
+						product.getProductGUID()
+						);
+		
+		return productResponse;
+	}
+	
+	public List<ProductResponse> productsConverToProductsResponse(List<Product> products){
+		List<ProductResponse> productResponses = new ArrayList<ProductResponse>();
+		
+		for(Product product : products) {
+			productResponses.add(productConverToProductResponse(product));
+		}
+		
+		return productResponses;
 	}
 	
 	

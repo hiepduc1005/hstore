@@ -37,7 +37,6 @@ public class ProductDto {
 	public String imgName;
 	
 	@Column(name = "guid" , updatable = false , nullable = false)
-	@GeneratedValue(strategy = GenerationType.UUID)
 	public String guid;
 	
 	public Integer getId() {

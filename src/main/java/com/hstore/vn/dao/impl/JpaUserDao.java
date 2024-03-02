@@ -94,6 +94,10 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
+		Query queryDeleteFK = em.createNativeQuery("DELETE FROM users_roles ur WHERE ur.user_id = :id");
+		queryDeleteFK.setParameter("id", id);
+		queryDeleteFK.executeUpdate();
+		
 		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , UserDto.class);
 		
 		query.setParameter("id", id);

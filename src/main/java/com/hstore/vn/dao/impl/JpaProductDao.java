@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
+import com.hstore.vn.dao.CategoryDao;
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.exception.product.CreateProductFailuerException;
 import com.hstore.vn.exception.product.DeleteProductFailuer;
@@ -23,14 +24,23 @@ public class JpaProductDao implements ProductDao{
 	
 	@Autowired
 	public EntityManager em;
+	
+	@Autowired
+	public CategoryDao categoryDao;
 
 	@Transactional
 	@Override
 	public List<ProductDto> getAllProducts() {
 		TypedQuery<ProductDto> typedQuery = em.
 				createQuery("SELECT p FROM product p",ProductDto.class);
-			
-		return typedQuery.getResultList();
+		
+		List<ProductDto> productDtos = typedQuery.getResultList();
+		
+		if(productDtos.isEmpty()) {
+			throw new NotFoundProductException("Not found any product");
+		}
+		
+		return productDtos;
 	}
 
 	@Transactional
@@ -77,6 +87,9 @@ public class JpaProductDao implements ProductDao{
 		if(id == null) {
 			throw new IllegalArgumentException("Wrong input must be type int");
 		}
+		
+		categoryDao.getCategoryById(id); // handle exception khi không tìm thấy category by id
+		
 		TypedQuery<ProductDto> typedQuery = em.
 				createQuery("SELECT p FROM product p WHERE p.category.id = :id",ProductDto.class);
 		
@@ -94,6 +107,10 @@ public class JpaProductDao implements ProductDao{
 		        throw new IllegalArgumentException("Invalid input parameters");
 		    }
 		
+		if(getProductByCategoryId(categoryId) == null) {
+			throw new NotFoundProductException("Not found any product with category id : " + categoryId);
+		}
+		
 		TypedQuery<ProductDto> typedQuery = em.
 				createQuery("SELECT p FROM product p WHERE p.category.id = :categoryId",ProductDto.class);
 					
@@ -103,7 +120,7 @@ public class JpaProductDao implements ProductDao{
 			
 		List<ProductDto> productDtos = typedQuery.getResultList();
 		if(productDtos == null || productDtos.isEmpty()) {
-			throw new NotFoundProductException("Not found any product with category id : " + categoryId);
+			throw new NotFoundProductException("Not found any product with category id : " + categoryId + " in page : " + page);
 		}
 		return productDtos;
 	}
@@ -124,7 +141,13 @@ public class JpaProductDao implements ProductDao{
 		qr.setParameter("query", query);
 		qr.setParameter("offset",(page-1)*paginationLimit);
 		qr.setParameter("limit",paginationLimit);
+		
 		List<ProductDto> productDtos = (List<ProductDto>)qr.getResultList();
+		
+		if(productDtos == null || productDtos.isEmpty()) {
+			throw new NotFoundProductException("Not found any product with name like : " + query + " in page : " + page);
+		}
+		
 		return productDtos; 
 	}
 
@@ -172,6 +195,11 @@ public class JpaProductDao implements ProductDao{
 			throw new IllegalArgumentException("Wrong input must be type int ");
 		}
 	    ProductDto productDto =	em.find(ProductDto.class, id);
+	    
+	    if(productDto == null) {
+	    	throw new NotFoundProductException("Can not found product with id : " + id);
+	    }
+	    
 		return productDto;
 	}
 
@@ -179,6 +207,7 @@ public class JpaProductDao implements ProductDao{
 	@Override
 	@Modifying
 	public void saveProduct(ProductDto product) {
+		
 		try {
 			em.merge(product);
 		}catch(IllegalArgumentException e) {
