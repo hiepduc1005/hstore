@@ -10,6 +10,8 @@ public interface UserService {
 	
 	void registerUser(UserDto user , String refferedUserPartnerCode);
 	
+	void createUser(UserDto user , String refferedUserPartnerCode);
+	
 	void updateUser(User user);
 	
 	User getUserById(Integer id);

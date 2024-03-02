@@ -56,7 +56,7 @@ public class UserController {
 		userDto.setPassword(userRequest.getPassword());
 		userDto.setRoles(roleConvert.rolesRequestConvertToRolesDto(userRequest.getRoles()));
 		
-		userService.registerUser(userDto,"");
+		userService.createUser(userDto,"");
 		return new ApiResponse<ResponseEntity<String>>("Create user success!",
 				new ResponseEntity<>(HttpStatus.OK),0);
 	}

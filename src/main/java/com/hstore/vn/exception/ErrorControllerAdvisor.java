@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
@@ -20,14 +21,14 @@ import com.hstore.vn.exception.user.CreateUserFailureException;
 import com.hstore.vn.exception.user.UserNotFoundException;
 import com.hstore.vn.payload.response.ApiResponse;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = AuthenticationCredentialsNotFoundException.class)
-    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleEmailAlreadyExists(AuthenticationCredentialsNotFoundException ex) {
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleUnauthenticatedUser(AuthenticationCredentialsNotFoundException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
-        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.UNAUTHORIZED);
     }
 	
 	@ExceptionHandler(value = EmailAlreadyExitsException.class)

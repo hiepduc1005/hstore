@@ -91,21 +91,39 @@ public class JpaUserDao implements UserDao {
 		return userDtos;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
-		Query queryDeleteFK = em.createNativeQuery("DELETE FROM users_roles ur WHERE ur.user_id = :id");
-		queryDeleteFK.setParameter("id", id);
-		queryDeleteFK.executeUpdate();
+		if(id == null ) {
+			throw new IllegalArgumentException("User Id must not be null");
+		}
 		
+		if(getUserById(id) == null) {
+			throw new UserNotFoundException("Can not found user with id : " + id);
+		}
+		
+		Query cartId = em.createNativeQuery("SELECT cart_id FROM user u WHERE u.id = :id", Integer.class);
+		cartId.setParameter("id",id);	
+		Integer cartIdWithUser = (Integer) cartId.getResultList().stream().findFirst().orElse(null); 
+		
+		Query queryDeleteFKRole = em.createNativeQuery("DELETE FROM users_roles ur WHERE ur.user_id = :id");
+		queryDeleteFKRole.setParameter("id", id);
+		queryDeleteFKRole.executeUpdate();
+				
 		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , UserDto.class);
 		
 		query.setParameter("id", id);
 		
-		 int rowsAffected = query.executeUpdate();
-	        if (rowsAffected == 0) {
-	        	throw new UserNotFoundException("User with id " + id + " not found.");
-	        }
+		int rowsAffected = query.executeUpdate();      
+		if (rowsAffected == 0) {
+        	throw new UserNotFoundException("User with id " + id + " not found.");
+        }
+                  
+        Query queryDeleteFKCart = 
+				em.createNativeQuery("DELETE FROM cart c WHERE c.id = :cartId");
+		queryDeleteFKCart.setParameter("cartId", cartIdWithUser);
+		queryDeleteFKCart.executeUpdate();
 		
 	}
 	

@@ -77,6 +77,35 @@ public class DefaultUserService implements UserService{
         
 		
 	}
+	
+	@Override
+	public void createUser(UserDto user, String refferedUserPartnerCode) {
+		String userEmailSignup = user.getEmail();
+		if(userDao.getUserByEmail(userEmailSignup) != null) {
+			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
+		}
+		
+		if(!refferedUserPartnerCode.isEmpty()) {
+			  user.setReffererUser(
+      		userDao.getUserByPartnerCode(refferedUserPartnerCode));
+		}
+		else {
+			 user.setReffererUser(null);
+		}
+		
+	  CartDto cartDto = new CartDto();
+	  cartDto = cartDao.createCart(cartDto);
+	  user.setCart(cartDto);
+      user.setPartnerCode(partnerCode.genneratePartnerCode());
+      user.setMoney(BigDecimal.ZERO);
+      
+      
+      String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+      user.setPassword(encodedPassword);
+      
+      userDao.saveUser(user);
+		
+	}
 
 	@Override
 	public void updateUser(User user) {
