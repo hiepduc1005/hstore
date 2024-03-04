@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.PurchaseStatusDao;
+import com.hstore.vn.entity.PurchaseStatus;
 import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
-import com.hstore.vn.payload.PurchaseStatusDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -19,11 +19,11 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 
 	@Transactional
 	@Override
-	public PurchaseStatusDto getPurchaseStatusById(Integer id) {
+	public PurchaseStatus getPurchaseStatusById(Integer id) {
 		if(id == null || id < 1) {
 			throw new IllegalArgumentException("Purchase id must be type int");
 		}
-		PurchaseStatusDto purchaseStatusDto = entityManager.find(PurchaseStatusDto.class, id);
+		PurchaseStatus purchaseStatusDto = entityManager.find(PurchaseStatus.class, id);
 		if(purchaseStatusDto == null) {
 			throw new PurchaseStatusNotFoundException("Can not found status with id : " + id );
 		}
@@ -32,12 +32,12 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 
 	@Transactional
 	@Override
-	public PurchaseStatusDto getPurchaseStatusByName(String statusName) {
-		TypedQuery<PurchaseStatusDto> typedQuery = entityManager.createQuery(
-				"SELECT o FROM purchase_status o WHERE o.statusName = :statusName ",PurchaseStatusDto.class);
+	public PurchaseStatus getPurchaseStatusByName(String statusName) {
+		TypedQuery<PurchaseStatus> typedQuery = entityManager.createQuery(
+				"SELECT o FROM purchase_status o WHERE o.statusName = :statusName ",PurchaseStatus.class);
 		
 		typedQuery.setParameter("statusName", statusName);
-		PurchaseStatusDto purchaseStatusDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		PurchaseStatus purchaseStatusDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 		if(purchaseStatusDto == null) {
 			throw new PurchaseStatusNotFoundException("Can not found status with name : " + statusName);
 		}
@@ -46,7 +46,7 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 
 	@Transactional
 	@Override
-	public void savePurchaseStatus(PurchaseStatusDto purchaseStatusDto) {
+	public void savePurchaseStatus(PurchaseStatus purchaseStatusDto) {
 		entityManager.merge(purchaseStatusDto);
 	}
 

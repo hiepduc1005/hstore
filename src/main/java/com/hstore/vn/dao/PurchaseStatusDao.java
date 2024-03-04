@@ -1,13 +1,13 @@
 package com.hstore.vn.dao;
 
-import com.hstore.vn.payload.PurchaseStatusDto;
+import com.hstore.vn.entity.PurchaseStatus;
 
 public interface PurchaseStatusDao {
 	
-	PurchaseStatusDto getPurchaseStatusById(Integer id);
+	PurchaseStatus getPurchaseStatusById(Integer id);
 	
-	PurchaseStatusDto getPurchaseStatusByName(String statusName);
+	PurchaseStatus getPurchaseStatusByName(String statusName);
 	
-	void savePurchaseStatus(PurchaseStatusDto purchaseStatusDto);
+	void savePurchaseStatus(PurchaseStatus purchaseStatusDto);
 
 }

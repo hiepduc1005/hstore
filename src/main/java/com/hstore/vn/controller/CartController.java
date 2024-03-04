@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.entity.Cart;
 import com.hstore.vn.entity.Product;
+import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.product.NotFoundProductException;
+import com.hstore.vn.payload.converter.CartConvert;
 import com.hstore.vn.payload.response.ApiResponse;
+import com.hstore.vn.payload.response.CartResponse;
 import com.hstore.vn.payload.response.TotalPriceResponse;
 import com.hstore.vn.service.CartService;
 import com.hstore.vn.service.ProductService;
@@ -38,25 +41,31 @@ public class CartController {
 	@Autowired
 	public ProductService productService;
 	
+	@Autowired
+	public CartConvert cartConvert;
+	
 	@GetMapping("/cart-by-user")
-	public ApiResponse<ResponseEntity<Cart>> getCartByUser(){
+	public ApiResponse<ResponseEntity<CartResponse>> getCartByUser(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
+		User user = userService.getUserByEmail(username);
 		if(userService.getUserByEmail(username) == null) {
 			throw new UsernameNotFoundException("Can not found user with email : " + username);
 		}
-		Cart cart = cartService.getCartByUserEmail(username);
+		Cart cart = cartService.getCartByUserId(user.getId());
+		CartResponse cartResponse = cartConvert.cartConvertToCartResponse(cart);
 		
-		return new ApiResponse<ResponseEntity<Cart>>(
-				"Get cart by user success !" ,new ResponseEntity<Cart>(cart,HttpStatus.OK),0);
+		return new ApiResponse<ResponseEntity<CartResponse>>(
+				"Get cart by user success !" ,new ResponseEntity<CartResponse>(cartResponse,HttpStatus.OK),0);
 	}
 	
 	@GetMapping("/cart/{cartId}")
-	public ApiResponse<ResponseEntity<Cart>> getCartById(@PathVariable Integer cartId){
+	public ApiResponse<ResponseEntity<CartResponse>> getCartById(@PathVariable Integer cartId){
 		Cart cart = cartService.getCartById(cartId);
 		
-		return new ApiResponse<ResponseEntity<Cart>>(
-				"Get cart with id : " + cartId + " success !",new ResponseEntity<Cart>(cart , HttpStatus.OK),0);
+		CartResponse cartResponse = cartConvert.cartConvertToCartResponse(cart);		
+		return new ApiResponse<ResponseEntity<CartResponse>>(
+				"Get cart with id : " + cartId + " success !",new ResponseEntity<CartResponse>(cartResponse , HttpStatus.OK),0);
 		
 	}
 	

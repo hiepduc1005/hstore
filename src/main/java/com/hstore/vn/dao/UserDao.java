@@ -2,24 +2,24 @@ package com.hstore.vn.dao;
 
 import java.util.List;
 
-import com.hstore.vn.payload.UserDto;
+import com.hstore.vn.entity.User;
 
 
 public interface UserDao {
 	
-	UserDto getUserById(Integer id);
+	User getUserById(Integer id);
 	
-	boolean saveUser(UserDto user);
+	User saveUser(User user);
 	
-	void updateUser(UserDto user);
+	void updateUser(User user);
 	
-	UserDto getUserByEmail(String email);
+	User getUserByEmail(String email);
 	
-	List<UserDto> getAllUsers();
+	List<User> getAllUsers();
 	
-	UserDto getUserByPartnerCode(String partnerCode);
+	User getUserByPartnerCode(String partnerCode);
 	
-	List<UserDto> getRefferedByUserId(Integer id);
+	List<User> getRefferedByUserId(Integer id);
 	
 	void deleteUser(Integer id);
 }

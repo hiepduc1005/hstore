@@ -117,12 +117,12 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
     }
 	
-	@ExceptionHandler(value = DeletePurchaseFailure.class)
-    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleDeletePurchaseFailure(DeletePurchaseFailure ex) {
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
-        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//	@ExceptionHandler(value = DeletePurchaseFailure.class)
+//    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleDeletePurchaseFailure(DeletePurchaseFailure ex) {
+//        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+//        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 	
 	@ExceptionHandler(value = CreatePurchaseFailure.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleCreatePurchaseFailure(CreatePurchaseFailure ex) {

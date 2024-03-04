@@ -15,15 +15,12 @@ import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.PurchaseStatusDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
+import com.hstore.vn.entity.PurchaseStatus;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.purchase.CreatePurchaseFailure;
-import com.hstore.vn.payload.PurchaseDto;
-import com.hstore.vn.payload.PurchaseStatusDto;
-import com.hstore.vn.payload.ProductDto;
-import com.hstore.vn.payload.UserDto;
-import com.hstore.vn.payload.converter.PurchaseConvert;
-import com.hstore.vn.payload.converter.PurchaseStatusConvert;
+import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
 import com.hstore.vn.service.AffilateMarketing;
 import com.hstore.vn.service.PurchaseService;
 import com.hstore.vn.service.UserService;
@@ -33,15 +30,10 @@ import com.hstore.vn.service.UserService;
 public class DefaultPurchaseService implements PurchaseService {
 	@Autowired
 	public PurchaseDao purchaseDao;
-
-	@Autowired
-	public PurchaseConvert purchaseConvert;
 	
 	@Autowired
 	public UserDao userDao;
 	
-	@Autowired
-	public PurchaseStatusConvert purchaseStatusConvert;
 	
 	@Autowired
 	public PurchaseStatusDao purchaseStatusDao;
@@ -60,21 +52,21 @@ public class DefaultPurchaseService implements PurchaseService {
 	public Purchase savePurchase(Purchase purchase) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.getUserByEmail(authentication.getName());
-		if(purchase.getProductsPurchase().isEmpty()) {
+		if(purchase.getProducts().isEmpty()) {
 			throw new CreatePurchaseFailure("Can not save purchase! You need to add atleast one product");
 		}
-		PurchaseStatusDto purchaseStatusDto = purchaseStatusDao.getPurchaseStatusByName("RECEIVE_REQUEST");
+		PurchaseStatus purchaseStatus = purchaseStatusDao.getPurchaseStatusByName("RECEIVE_REQUEST");
 		purchase.setLocalDateTime(getCurrentDate());
 		purchase.setUser(user);
-		purchase.setPurchaseStatus(purchaseStatusConvert.convertPurchaseStatusDtoToPurchaseStatus(purchaseStatusDto));
-		purchaseDao.savePurchase(purchaseConvert.convertPurchaseToPurchaseDto(purchase));
+		purchase.setPurchaseStatus(purchaseStatus);
+		purchaseDao.savePurchase(purchase);
 		
 		return purchase;
 	}
 	
 	@Override
 	public void updatePurchase(Purchase purchase) {
-		purchaseDao.updatePurchase(purchaseConvert.convertPurchaseToPurchaseDto(purchase));
+		purchaseDao.updatePurchase(purchase);
 	}
 
 	@Override
@@ -84,40 +76,45 @@ public class DefaultPurchaseService implements PurchaseService {
 			throw new IllegalArgumentException("Purchase id must be type int");
 		}
 		
-		PurchaseDto purchaseDto = purchaseDao.getPurchaseById(purchaseId);
-		PurchaseStatusDto currentStatus = purchaseDto.getPurchaseStatus();
+		Purchase purchase = purchaseDao.getPurchaseById(purchaseId);
+		PurchaseStatus currentStatus = purchase.getPurchaseStatus();
+		if(currentStatus.getStatusName().equalsIgnoreCase(SetupDataLoader.COMPLETED)) {
+			throw new PurchaseStatusNotFoundException("Can't update purchase completed");
+		}
+		
 		int newStatusId = currentStatus.getId() + 1;
 		
-        UserDto userDto = purchaseDto.getUser();
-		UserDto inviteUser = userDto.getReffererUser();
+        User userDto = purchase.getUser();
+		User inviteUser = userDto.getReffererUser();
 		BigDecimal moneyReward = BigDecimal
-				.valueOf(getTotalsMoneyByPurchase(purchaseDto) * AffilateMarketing.REWARD_AFFILATE_MARKETING);
+				.valueOf(getTotalsMoneyByPurchase(purchase) * AffilateMarketing.REWARD_AFFILATE_MARKETING);
 		
-        BigDecimal currentInviteUserMoney = inviteUser.getMoney();
-        PurchaseStatusDto newStatus = purchaseStatusDao.getPurchaseStatusById(newStatusId);
+       
+        PurchaseStatus newStatus = purchaseStatusDao.getPurchaseStatusById(newStatusId);
 		
 		if(newStatus.statusName.equalsIgnoreCase(SetupDataLoader.COMPLETED) && inviteUser != null) {
-				
+		    BigDecimal currentInviteUserMoney = inviteUser.getMoney();
 	        inviteUser.setMoney(currentInviteUserMoney.add(moneyReward));
 			userDto.setReffererUser(inviteUser);
 			userDao.updateUser(inviteUser);
 			userDao.updateUser(userDto);
-			purchaseDto.setUser(userDto);
+			purchase.setUser(userDto);
 		}
 		
-		purchaseDto.setPurchaseStatus(newStatus);
+		purchase.setPurchaseStatus(newStatus);
 		
-		updatePurchase(purchaseConvert.convertPurchaseDtoToPurchase(purchaseDto));
+		updatePurchase(purchase);
 		
-		return purchaseConvert.convertPurchaseDtoToPurchase(purchaseDto);
+		return purchase;
 	}
 
-	private Double getTotalsMoneyByPurchase(PurchaseDto purchaseDto) {
-		List<ProductDto> productDtos = purchaseDto.getProducts();
+	@Override
+	public Double getTotalsMoneyByPurchase(Purchase purchase) {
+		List<Product> productDtos = purchase.getProducts();
 		double res = 0;
 		
         if(productDtos != null && !productDtos.isEmpty()) {
-        	for (ProductDto productDto : productDtos) {
+        	for (Product productDto : productDtos) {
 			res += productDto.getPrice().doubleValue();
 		}
      }
@@ -125,16 +122,24 @@ public class DefaultPurchaseService implements PurchaseService {
 
 		return res;
 	}
+	
+	@Override
+	public BigDecimal getTotalsMoneyInPurchaseWithAuthenticatedUser() {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		UserDto userDto = userDao.getUserByEmail(authentication.getName());
+//		PurchaseDto purchaseDto = purchaseDao.getPurchasesByUserId(userDto.getId());
+		return null;
+	}
 
 	@Override
 	public List<Purchase> getNotCompletePurchaseBy(Integer completedPurchaseStatusId) {
 		// TODO Auto-generated method stub
-		return purchaseConvert.convertPurchasesDtoToPurchases(purchaseDao.getNotCompletedPurchases(completedPurchaseStatusId));
+		return purchaseDao.getNotCompletedPurchases(completedPurchaseStatusId);
 	}
 
 	@Override
 	public Purchase getPurchaseById(Integer id) {
-		return purchaseConvert.convertPurchaseDtoToPurchase(purchaseDao.getPurchaseById(id));
+		return purchaseDao.getPurchaseById(id);
 	}
 
 	@Override
@@ -148,8 +153,7 @@ public class DefaultPurchaseService implements PurchaseService {
 		}
 		
 		List<Purchase> purchases =
-				purchaseConvert.convertPurchasesDtoToPurchases(
-						purchaseDao.getPurchasesByUserId(userId));
+						purchaseDao.getPurchasesByUserId(userId);
 		
 		return purchases;
 	}
@@ -158,5 +162,11 @@ public class DefaultPurchaseService implements PurchaseService {
 	public void deletePurchase(Integer purchaseId) {
 		purchaseDao.deletePurchaseById(purchaseId);
 	}
+
+	@Override
+	public List<Purchase> getPurchasesByUserId(Integer userId) {
+		return purchaseDao.getPurchasesByUserId(userId);
+	}
+
 
 }

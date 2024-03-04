@@ -2,32 +2,32 @@ package com.hstore.vn.dao;
 
 import java.util.List;
 
-import com.hstore.vn.payload.ProductDto;
+import com.hstore.vn.entity.Product;
 
 
 public interface ProductDao {
 	
-	void saveProduct(ProductDto product);
+	Product saveProduct(Product product);
 	
-	void update(ProductDto productDto);
+	void update(Product productDto);
 	
 	void deleteProduct(String uuid);
 	
-	List<ProductDto> getAllProducts();
+	List<Product> getAllProducts();
 	
-	ProductDto getProductByGuid(String guid);
+	Product getProductByGuid(String guid);
 	
-	List<ProductDto> getProductsLikeName(String query);
+	List<Product> getProductsLikeName(String query);
 	
-	List<ProductDto> getProductByCategoryName(String name);
+	List<Product> getProductByCategoryName(String name);
 	
-	List<ProductDto> getProductByCategoryId(Integer id);
+	List<Product> getProductByCategoryId(Integer id);
 	
-	List<ProductDto> getProductsByCategoryIdWithPaginationLimit(Integer categoryId, Integer page , Integer paginationLimit);
+	List<Product> getProductsByCategoryIdWithPaginationLimit(Integer categoryId, Integer page , Integer paginationLimit);
 	
-	List<ProductDto> getProductLikeNameWithPaginationLimit(String query, Integer page, Integer paginationLimit);
+	List<Product> getProductLikeNameWithPaginationLimit(String query, Integer page, Integer paginationLimit);
 	
-	List<ProductDto> getAllProductWithPaginationLimit(Integer page, Integer paginationLimit);
+	List<Product> getAllProductWithPaginationLimit(Integer page, Integer paginationLimit);
  	
 	Integer getProductCountBySearch(String query);
 	
@@ -35,8 +35,8 @@ public interface ProductDao {
 	
 	Integer getProductCountByCategoryName(String categoryName);
 	
-	ProductDto getProductById(Integer id);
+	Product getProductById(Integer id);
 	
-	ProductDto getProductByName(String name);
+	Product getProductByName(String name);
 
 }

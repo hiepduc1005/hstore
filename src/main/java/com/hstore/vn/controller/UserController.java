@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
-import com.hstore.vn.payload.UserDto;
 import com.hstore.vn.payload.converter.RoleConvert;
 import com.hstore.vn.payload.converter.UserConvert;
 import com.hstore.vn.payload.request.UserIdRequest;
@@ -49,7 +49,7 @@ public class UserController {
 			throw new EmailAlreadyExitsException("email already exist !");
 		}
 		
-		UserDto userDto = new UserDto();
+		User userDto = new User();
 		userDto.setEmail(userRequest.getEmail());
 		userDto.setFirstName(userRequest.getFirstName());
 		userDto.setLastName(userRequest.getLastName());
@@ -63,7 +63,7 @@ public class UserController {
 	
 	@GetMapping("/all")
 	public ApiResponse<ResponseEntity<List<UserResponse>>> getAllUser(){
-		List<UserResponse> userResponses = userConvert.usersDtoConvertToUsersResponse(userService.getAllUser());
+		List<UserResponse> userResponses = userConvert.usersConvertToUsersResponse(userService.getAllUser());
 		
 		return new ApiResponse<ResponseEntity<List<UserResponse>>>("Get all user success!",
 				new ResponseEntity<List<UserResponse>>(userResponses,HttpStatus.OK),0);
@@ -71,7 +71,7 @@ public class UserController {
 	
 	@GetMapping
 	public ApiResponse<ResponseEntity<UserResponse>> getUserByEmail(@RequestBody String email){
-		UserResponse userResponse = userConvert.userDtoConvertToUserResponse(userDao.getUserByEmail(email));
+		UserResponse userResponse = userConvert.userConvertToUserResponse(userDao.getUserByEmail(email));
 		
 		return new ApiResponse<ResponseEntity<UserResponse>>("Get user with email " + email + " success!",
 				new ResponseEntity<UserResponse>(userResponse,HttpStatus.OK),0);
@@ -82,7 +82,7 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 	
-		UserDto userDto = userDao.getUserByEmail(username);
+		User userDto = userDao.getUserByEmail(username);
 		userDto.setEmail(userRequestUpdate.getEmail());
 		userDto.setFirstName(userRequestUpdate.getFirstName());
 		userDto.setLastName(userRequestUpdate.getLastName());
@@ -91,7 +91,7 @@ public class UserController {
 		userDto.setCreditNum(userRequestUpdate.getCardNum());
 		
 		
-		userService.updateUser(userConvert.userDtoConvertToUser(userDto));
+		userService.updateUser(userDto);
 		
 		return new ApiResponse<ResponseEntity<String>>("Update user " + userRequestUpdate.getEmail() + " success!",
 				new ResponseEntity<String>(HttpStatus.OK),0);

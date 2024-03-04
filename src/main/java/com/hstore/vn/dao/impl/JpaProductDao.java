@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.CategoryDao;
 import com.hstore.vn.dao.ProductDao;
+import com.hstore.vn.entity.Product;
 import com.hstore.vn.exception.product.CreateProductFailuerException;
 import com.hstore.vn.exception.product.DeleteProductFailuer;
 import com.hstore.vn.exception.product.NotFoundProductException;
 import com.hstore.vn.exception.product.UpdateProductFailuer;
-import com.hstore.vn.payload.ProductDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -30,11 +30,11 @@ public class JpaProductDao implements ProductDao{
 
 	@Transactional
 	@Override
-	public List<ProductDto> getAllProducts() {
-		TypedQuery<ProductDto> typedQuery = em.
-				createQuery("SELECT p FROM product p",ProductDto.class);
+	public List<Product> getAllProducts() {
+		TypedQuery<Product> typedQuery = em.
+				createQuery("SELECT p FROM product p",Product.class);
 		
-		List<ProductDto> productDtos = typedQuery.getResultList();
+		List<Product> productDtos = typedQuery.getResultList();
 		
 		if(productDtos.isEmpty()) {
 			throw new NotFoundProductException("Not found any product");
@@ -45,15 +45,15 @@ public class JpaProductDao implements ProductDao{
 
 	@Transactional
 	@Override
-	public ProductDto getProductByGuid(String guid) {
+	public Product getProductByGuid(String guid) {
 		if(guid == null) {
 			throw new IllegalArgumentException("Wrong input must be type String");
 		}
-		TypedQuery<ProductDto> typedQuery = em.
-				createQuery("SELECT p FROM product p WHERE p.guid = :guid",ProductDto.class);
+		TypedQuery<Product> typedQuery = em.
+				createQuery("SELECT p FROM product p WHERE p.guid = :guid",Product.class);
 		
 		typedQuery.setParameter("guid",guid);
-		ProductDto productDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		Product productDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 		return productDto;
 	}
 	
@@ -61,46 +61,46 @@ public class JpaProductDao implements ProductDao{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public List<ProductDto> getProductsLikeName(String query) {
+	public List<Product> getProductsLikeName(String query) {
 	    Query q = em.createNativeQuery(
 				"SELECT * FROM product WHERE UPPER(product_name)"
-				+ " LIKE UPPER(CONCAT('%',:query,'%'))",ProductDto.class);
+				+ " LIKE UPPER(CONCAT('%',:query,'%'))",Product.class);
 		q.setParameter("query", query);
-		List<ProductDto> productDtos =(List<ProductDto>)q.getResultList();
+		List<Product> productDtos =(List<Product>)q.getResultList();
 		return productDtos;
 	}
 
 	@Transactional
 	@Override
-	public List<ProductDto> getProductByCategoryName(String name) {
-		TypedQuery<ProductDto> typedQuery = em.
-				createQuery("SELECT p FROM product p WHERE p.category.name = :name",ProductDto.class);
+	public List<Product> getProductByCategoryName(String name) {
+		TypedQuery<Product> typedQuery = em.
+				createQuery("SELECT p FROM product p WHERE p.category.name = :name",Product.class);
 		
 		typedQuery.setParameter("name",name);
-		List<ProductDto> productDtos = typedQuery.getResultList();
+		List<Product> productDtos = typedQuery.getResultList();
 		return productDtos;
 	}
 
 	@Transactional
 	@Override
-	public List<ProductDto> getProductByCategoryId(Integer id) {
+	public List<Product> getProductByCategoryId(Integer id) {
 		if(id == null) {
 			throw new IllegalArgumentException("Wrong input must be type int");
 		}
 		
 		categoryDao.getCategoryById(id); // handle exception khi không tìm thấy category by id
 		
-		TypedQuery<ProductDto> typedQuery = em.
-				createQuery("SELECT p FROM product p WHERE p.category.id = :id",ProductDto.class);
+		TypedQuery<Product> typedQuery = em.
+				createQuery("SELECT p FROM product p WHERE p.category.id = :id",Product.class);
 		
 		typedQuery.setParameter("id",id);
-		List<ProductDto> productDtos = typedQuery.getResultList();
+		List<Product> productDtos = typedQuery.getResultList();
 		return productDtos;
 	}
 
 	@Transactional
 	@Override
-	public List<ProductDto> getProductsByCategoryIdWithPaginationLimit(Integer categoryId, Integer page,
+	public List<Product> getProductsByCategoryIdWithPaginationLimit(Integer categoryId, Integer page,
 			Integer paginationLimit) {
 		
 		if (categoryId == null || page == null || paginationLimit == null || page < 1 || paginationLimit < 1) {
@@ -111,14 +111,14 @@ public class JpaProductDao implements ProductDao{
 			throw new NotFoundProductException("Not found any product with category id : " + categoryId);
 		}
 		
-		TypedQuery<ProductDto> typedQuery = em.
-				createQuery("SELECT p FROM product p WHERE p.category.id = :categoryId",ProductDto.class);
+		TypedQuery<Product> typedQuery = em.
+				createQuery("SELECT p FROM product p WHERE p.category.id = :categoryId",Product.class);
 					
 		typedQuery.setParameter("categoryId",categoryId);
 		typedQuery.setFirstResult((page-1)*paginationLimit);
 		typedQuery.setMaxResults(paginationLimit);	
 			
-		List<ProductDto> productDtos = typedQuery.getResultList();
+		List<Product> productDtos = typedQuery.getResultList();
 		if(productDtos == null || productDtos.isEmpty()) {
 			throw new NotFoundProductException("Not found any product with category id : " + categoryId + " in page : " + page);
 		}
@@ -128,7 +128,7 @@ public class JpaProductDao implements ProductDao{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public List<ProductDto> getProductLikeNameWithPaginationLimit(String query, Integer page, Integer paginationLimit) {
+	public List<Product> getProductLikeNameWithPaginationLimit(String query, Integer page, Integer paginationLimit) {
 		
 		if ( page == null || paginationLimit == null || page < 1 || paginationLimit < 1) {
 	        throw new IllegalArgumentException("Invalid input parameters");
@@ -137,12 +137,12 @@ public class JpaProductDao implements ProductDao{
 		Query qr = em.
 				createNativeQuery("SELECT * FROM product WHERE UPPER(product_name) "
 						+ "LIKE UPPER(CONCAT('%',:query,'%')) LIMIT :offset , :limit",
-						ProductDto.class);
+						Product.class);
 		qr.setParameter("query", query);
 		qr.setParameter("offset",(page-1)*paginationLimit);
 		qr.setParameter("limit",paginationLimit);
 		
-		List<ProductDto> productDtos = (List<ProductDto>)qr.getResultList();
+		List<Product> productDtos = (List<Product>)qr.getResultList();
 		
 		if(productDtos == null || productDtos.isEmpty()) {
 			throw new NotFoundProductException("Not found any product with name like : " + query + " in page : " + page);
@@ -155,7 +155,7 @@ public class JpaProductDao implements ProductDao{
 	@Override
 	public Integer getProductCountBySearch(String query) {
 		Query qr= em.createNativeQuery("SELECT COUNT(*) FROM product WHERE UPPER(product_name)"
-				+ " LIKE UPPER(CONCAT('%',:query,'%'))",ProductDto.class);
+				+ " LIKE UPPER(CONCAT('%',:query,'%'))",Product.class);
 		
 		qr.setParameter("query", query);
 		Integer count = (Integer)qr.getSingleResult();
@@ -190,11 +190,11 @@ public class JpaProductDao implements ProductDao{
 
 	@Transactional
 	@Override
-	public ProductDto getProductById(Integer id) {
+	public Product getProductById(Integer id) {
 		if(id == null) {
 			throw new IllegalArgumentException("Wrong input must be type int ");
 		}
-	    ProductDto productDto =	em.find(ProductDto.class, id);
+	    Product productDto =	em.find(Product.class, id);
 	    
 	    if(productDto == null) {
 	    	throw new NotFoundProductException("Can not found product with id : " + id);
@@ -206,10 +206,10 @@ public class JpaProductDao implements ProductDao{
 	@Transactional
 	@Override
 	@Modifying
-	public void saveProduct(ProductDto product) {
+	public Product saveProduct(Product product) {
 		
 		try {
-			em.merge(product);
+		return em.merge(product);
 		}catch(IllegalArgumentException e) {
 			throw new CreateProductFailuerException("Create product fail");
 		}
@@ -219,7 +219,7 @@ public class JpaProductDao implements ProductDao{
 	@Transactional
 	@Modifying
 	@Override
-	public void update(ProductDto productDto) {
+	public void update(Product productDto) {
 		
 		try {
 			em.merge(productDto);
@@ -245,12 +245,12 @@ public class JpaProductDao implements ProductDao{
 
 	@Transactional
 	@Override
-	public ProductDto getProductByName(String name) {
-		TypedQuery<ProductDto> typedQuery =
-				em.createQuery("SELECT p FROM product p WHERE p.name = :name", ProductDto.class);
+	public Product getProductByName(String name) {
+		TypedQuery<Product> typedQuery =
+				em.createQuery("SELECT p FROM product p WHERE p.name = :name", Product.class);
 		typedQuery.setParameter("name", name);
 		
-		ProductDto productDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		Product productDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with name : " + name);
 		}
@@ -260,19 +260,19 @@ public class JpaProductDao implements ProductDao{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public List<ProductDto> getAllProductWithPaginationLimit(Integer page, Integer paginationLimit) {
+	public List<Product> getAllProductWithPaginationLimit(Integer page, Integer paginationLimit) {
 		if ( page == null || paginationLimit == null || page < 1 || paginationLimit < 1) {
 	        throw new IllegalArgumentException("Invalid input parameters");
 	    }
 	
 		Query qr = em.
 				createNativeQuery("SELECT * FROM product LIMIT :offset , :limit",
-						ProductDto.class);
+						Product.class);
 		
 		qr.setParameter("offset",(page-1)*paginationLimit);
 		qr.setParameter("limit",paginationLimit);
 		
-		List<ProductDto> productDtos = (List<ProductDto>)qr.getResultList();
+		List<Product> productDtos = (List<Product>)qr.getResultList();
 		return productDtos; 
 	}
 	

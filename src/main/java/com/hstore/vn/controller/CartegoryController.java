@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.entity.Category;
-import com.hstore.vn.entity.impl.DefaultCategory;
 import com.hstore.vn.payload.converter.CategoryConvert;
 import com.hstore.vn.payload.request.CategoryRequest;
 import com.hstore.vn.payload.response.ApiResponse;
@@ -55,8 +54,8 @@ public class CartegoryController {
 	
 	@PostMapping
 	public ApiResponse<ResponseEntity<String>> postCategory(@RequestBody CategoryRequest categoryRequest){
-		Category category = new DefaultCategory();
-		category.setCategoryName(categoryRequest.getName());
+		Category category = new Category();
+		category.setName(categoryRequest.getName());
 		categoryService.createCategory(category);
 		
 		return new ApiResponse<ResponseEntity<String>>("Create category  success!",

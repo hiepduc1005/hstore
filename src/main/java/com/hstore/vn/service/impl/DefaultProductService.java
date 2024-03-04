@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.entity.Product;
-import com.hstore.vn.payload.converter.ProductConvert;
 import com.hstore.vn.service.ProductService;
 
 
@@ -20,38 +19,37 @@ public class DefaultProductService implements ProductService {
 	@Autowired
 	public ProductDao productDao;
 	
-	@Autowired
-	public ProductConvert productConvert;
 	
+
 
 	@Override
 	public Product getProductByGuid(String guid) {
 		// TODO Auto-generated method stub
-		return productConvert.productDtoConvertToProduct(productDao.getProductByGuid(guid));
-	}
+		return productDao.getProductByGuid(guid);
+	}              
 	
 	@Override
-	public void saveProduct(Product product) {
-		product.setProductGUID(UUID.randomUUID().toString());
-		productDao.saveProduct(productConvert.productConvertToProductDto(product));
+	public Product saveProduct(Product product) {
+		product.setGuid(UUID.randomUUID().toString());
+		return productDao.saveProduct(product);
 	}
 
 	@Override
 	public List<Product> getProductsByCategoryName(String categoryName) {
 		// TODO Auto-generated method stub
-		return productConvert.productsDtoConvertToProducts(productDao.getProductByCategoryName(categoryName));
+		return productDao.getProductByCategoryName(categoryName);
 	}
 
 	@Override
 	public List<Product> getProductsByCategoryId(Integer id) {
 		// TODO Auto-generated method stub
-		return productConvert.productsDtoConvertToProducts(productDao.getProductByCategoryId(id));
+		return productDao.getProductByCategoryId(id);
 	}
 
 	@Override
 	public Product getProductById(Integer id) {
 		// TODO Auto-generated method stub
-		return productConvert.productDtoConvertToProduct(productDao.getProductById(id));
+		return productDao.getProductById(id);
 	}
 
 	@Override
@@ -62,16 +60,16 @@ public class DefaultProductService implements ProductService {
 			return getAllProductWithPaginationLimit(page, paginationLimit);
 		}
 		
-		return productConvert.productsDtoConvertToProducts(
-				productDao.getProductLikeNameWithPaginationLimit(querySearch, page, paginationLimit));
+		return 
+				productDao.getProductLikeNameWithPaginationLimit(querySearch, page, paginationLimit);
 	}
 
 	@Override
 	public List<Product> getProductsByCategoryForPageWithLimit(Integer categoryId, Integer page,
 			Integer paginationLimit) {
 		
-		return productConvert.productsDtoConvertToProducts(
-				productDao.getProductsByCategoryIdWithPaginationLimit(categoryId, page, paginationLimit));
+		return
+				productDao.getProductsByCategoryIdWithPaginationLimit(categoryId, page, paginationLimit);
 	}
 
 	@Override
@@ -88,12 +86,12 @@ public class DefaultProductService implements ProductService {
 
 	@Override
 	public List<Product> getAllProduct() {	
-		return productConvert.productsDtoConvertToProducts(productDao.getAllProducts());
+		return productDao.getAllProducts();
 	}
 
 	@Override
 	public void updateProduct(Product product) {
-		productDao.update(productConvert.productConvertToProductDto(product));
+		productDao.update(product);
 	}
 
 	@Override
@@ -104,14 +102,14 @@ public class DefaultProductService implements ProductService {
 	@Override
 	public Product getProductByName(String name) {
 		// TODO Auto-generated method stub
-		return productConvert.productDtoConvertToProduct(productDao.getProductByName(name));
+		return productDao.getProductByName(name);
 	}
 
 	@Override
 	public List<Product> getAllProductWithPaginationLimit(Integer page, Integer limit) {
 		
-		return productConvert.productsDtoConvertToProducts(
-				productDao.getAllProductWithPaginationLimit(page, limit));
+		return 
+				productDao.getAllProductWithPaginationLimit(page, limit);
 	}
 
 }

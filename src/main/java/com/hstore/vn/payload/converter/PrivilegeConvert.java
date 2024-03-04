@@ -8,9 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.PrivilegeDao;
 import com.hstore.vn.entity.Privilege;
-import com.hstore.vn.entity.impl.DefaultPrivilege;
-import com.hstore.vn.payload.PrivilegeDto;
 import com.hstore.vn.payload.request.PrivilegeRequest;
+import com.hstore.vn.payload.response.PrivilegeResponse;
 
 
 @Service
@@ -19,74 +18,19 @@ public class PrivilegeConvert {
 	@Autowired
 	public PrivilegeDao privilegeDao;
 	
-	public Privilege privilegeDtoConvertToPrivilege(PrivilegeDto privilegeDto) {
-		if(privilegeDto == null) {
-			return null;
-		}
-		
-		Privilege privilege = new DefaultPrivilege();
-		
-		privilege.setId(privilegeDto.getId());
-		privilege.setName(privilegeDto.getName());
-		
+	
+	
+	public Privilege privilegeRequestConvertToPrivilege(PrivilegeRequest privilegeRequest) {
+		Privilege privilege = privilegeDao.getPrivilegeByName(privilegeRequest.getName());
 		
 		return privilege;
 	}
 	
-	public PrivilegeDto privilegeConvertToPrivilegeDto(Privilege privilege) {
-		if(privilege == null) {
-			return null;
-		}
-		
-		PrivilegeDto privilegeDto = new PrivilegeDto();
-		
-		privilegeDto.setId(privilege.getId());
-		privilegeDto.setName(privilege.getName());
-		
-		
-		return privilegeDto;
-	}
-	
-	public List<Privilege> convertPrivilegeDtosToPrivileges(List<PrivilegeDto> privilegeDtos){
-		if(privilegeDtos == null) {
-			return null;
-		}
-		
-		
+	public List<Privilege> privilegesRequestConvertToPrivileges(List<PrivilegeRequest> privilegeRequests){
 		List<Privilege> privileges = new ArrayList<Privilege>();
 		
-		for(PrivilegeDto privilegeDto : privilegeDtos) {
-			privileges.add(privilegeDtoConvertToPrivilege(privilegeDto));
-		}
-		
-		return privileges;
-	}
-	
-	public List<PrivilegeDto> convertPrivilegesToPrivilegeDtos(List<Privilege> privileges){
-		if(privileges == null) {
-			return null;
-		}
-		
-		List<PrivilegeDto> privilegeDtos = new ArrayList<PrivilegeDto>();
-		
-		for(Privilege privilege : privileges) {
-			privilegeDtos.add(privilegeConvertToPrivilegeDto(privilege));
-		}
-		
-		return privilegeDtos;
-	}
-	
-	public PrivilegeDto privilegeRequestConvertToPrivilegeDto(PrivilegeRequest privilegeRequest) {
-		PrivilegeDto privilegeDto = privilegeDao.getPrivilegeByName(privilegeRequest.getName());
-		
-		return privilegeDto;
-	}
-	
-	public List<PrivilegeDto> privilegesRequestConvertToPrivilegesDto(List<PrivilegeRequest> privilegeRequests){
-		List<PrivilegeDto> privileges = new ArrayList<PrivilegeDto>();
-		
 		for(PrivilegeRequest privilegeRequest : privilegeRequests) {
-			privileges.add(privilegeRequestConvertToPrivilegeDto(privilegeRequest));
+			privileges.add(privilegeRequestConvertToPrivilege(privilegeRequest));
 		}
 		
 		return privileges;
@@ -94,6 +38,25 @@ public class PrivilegeConvert {
 //		return privilegeRequests.stream()
 //				.map(this :: privilegeRequestConvertToPrivilegeDto )
 //				.collect(Collectors.toList());
+	}
+	
+	public PrivilegeResponse privilegeConvertToPrivilegeResponse(Privilege privilege) {
+		PrivilegeResponse privilegeResponse = new PrivilegeResponse(
+				privilege.getId(),
+				privilege.getName()
+				);
+		
+		return privilegeResponse;
+	}
+	
+	public List<PrivilegeResponse> privilegesConvertToPrivilegesResponse(List<Privilege> privileges){
+		List<PrivilegeResponse> privilegeResponses = new ArrayList<PrivilegeResponse>();
+		
+		for(Privilege privilege : privileges) {
+			privilegeResponses.add(privilegeConvertToPrivilegeResponse(privilege));
+		}
+		
+		return privilegeResponses;
 	}
 
 }

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.entity.Category;
 import com.hstore.vn.entity.Product;
-import com.hstore.vn.entity.impl.DefaultProduct;
-import com.hstore.vn.payload.ProductDto;
 import com.hstore.vn.payload.request.ProductRequest;
 import com.hstore.vn.payload.request.ProductRequestUpdate;
 import com.hstore.vn.payload.response.ProductResponse;
@@ -30,79 +28,14 @@ public class ProductConvert {
 	@Autowired
 	public ProductDao productDao;
 	
-	public Product productDtoConvertToProduct(ProductDto productDto) {	
-		if(productDto == null) {
-			return null;
-		}
-		
-		Product product = new DefaultProduct();
-
-		product.setCategory(categoryConvert.categoryDtoConvertToCategory(productDto.getCategory()));	
-		product.setImg(productDto.getImgName());
-		product.setPrice(productDto.getPrice());
-		product.setProductDescription(productDto.getDescription());
-		product.setProductGUID(productDto.getGuid());
-		product.setProductId(productDto.getId());
-		product.setProductName(productDto.getName());
-		
-		return product;
-	}
-	
-	public ProductDto productConvertToProductDto(Product product) {
-		if(product == null) {
-			return null;
-		}
-		
-		ProductDto productDto = new ProductDto();
-		
-		  productDto.setCategory(categoryConvert.categoryConvertToCategoryDto(product.getCategory()));
-		  productDto.setImgName(product.getImg());
-		  productDto.setPrice(product.getPrice());
-		  productDto.setDescription(product.getProductDescription());
-		  productDto.setGuid(product.getProductGUID());
-		  productDto.setId(product.getProductId());
-		  productDto.setName(product.getProductName());
-	
-		
-		
-		return productDto;
-	}
-	
-	public List<Product> productsDtoConvertToProducts(List<ProductDto> productDtos){
-		if(productDtos == null) {
-			return null;
-		}
-		
-		List<Product> products = new ArrayList<Product>();
-		
-		for(ProductDto productDto : productDtos) {
-			products.add(productDtoConvertToProduct(productDto));
-		}
-		
-		return products;
-	}
-	
-	public List<ProductDto> productsConvertToProductsDto(List<Product> products){
-		if(products == null) {
-			return null;
-		}
-		
-		List<ProductDto> productsDto = new ArrayList<ProductDto>();
-		
-		for(Product product : products) {
-			productsDto.add(productConvertToProductDto(product));
-		}
-		
-		return productsDto;
-	}
 	
 	public Product productRequestConvertToProduct(ProductRequest productRequest) {
 		Category category = categoryService.getCategoryByName(productRequest.getCategory().getName());
 		
-		Product product = new DefaultProduct();
-		product.setProductName(productRequest.getName());
-		product.setProductDescription(productRequest.getDescription());
-		product.setImg(productRequest.getImgName());
+		Product product = new Product();
+		product.setName(productRequest.getName());
+		product.setDescription(productRequest.getDescription());
+		product.setImgName(productRequest.getImgName());
 		product.setPrice(productRequest.getPrice());
 		product.setCategory(category);
 		
@@ -113,10 +46,10 @@ public class ProductConvert {
 	public Product productRequestUpdateConvertToProduct(ProductRequestUpdate productRequestUpdate) {
 		Category category = categoryService.getCategoryByName(productRequestUpdate.getCategory().getName());
 		
-		Product product = productDtoConvertToProduct(productDao.getProductById(productRequestUpdate.getId()));
-		product.setProductName(productRequestUpdate.getName());
-		product.setProductDescription(productRequestUpdate.getDescription());
-		product.setImg(productRequestUpdate.getImgName());
+		Product product =productDao.getProductById(productRequestUpdate.getId());
+		product.setName(productRequestUpdate.getName());
+		product.setDescription(productRequestUpdate.getDescription());
+		product.setImgName(productRequestUpdate.getImgName());
 		product.setPrice(productRequestUpdate.getPrice());
 		product.setCategory(category);
 		
@@ -131,13 +64,13 @@ public class ProductConvert {
 		
 		ProductResponse productResponse = 
 				new ProductResponse(
-						product.getProductId(),
-						product.getProductName(),
+						product.getId(),
+						product.getName(),
 						categoryConvert.categoryConvertToCategoryResponse( product.getCategory()),
 						product.getPrice(),
-						product.getProductDescription(),
-						product.getImg(),
-						product.getProductGUID()
+						product.getDescription(),
+						product.getImgName(),
+						product.getGuid()
 						);
 		
 		return productResponse;

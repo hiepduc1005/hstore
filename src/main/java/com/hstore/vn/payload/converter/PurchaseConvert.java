@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
-import com.hstore.vn.entity.impl.DefaultPurchase;
-import com.hstore.vn.payload.PurchaseDto;
 import com.hstore.vn.payload.request.PurchaseRequest;
 import com.hstore.vn.payload.request.PurchaseRequestUpdate;
 import com.hstore.vn.payload.response.PurchaseResponse;
@@ -26,65 +24,18 @@ public class PurchaseConvert {
 	@Autowired
 	public ProductConvert productConvert;
 	
-	@Autowired
-	public UserConvert userConvert;
+	
 	
 	@Autowired
 	public ProductDao productDao;
 	
 	
-	public Purchase convertPurchaseDtoToPurchase(PurchaseDto purchaseDto) {
-		if(purchaseDto == null) {
-			return null;
-		}
-		
-		Purchase purchase = new DefaultPurchase();
-		
-		purchase.setPurchaseId(purchaseDto.getId());
-		purchase.setLocalDateTime(purchaseDto.getLocalDateTime());
-		purchase.setUser(userConvert.userDtoConvertToUser(purchaseDto.getUser()));
-		purchase.setPurchaseStatus(purchaseStatusConvert.convertPurchaseStatusDtoToPurchaseStatus(purchaseDto.getPurchaseStatus()));
-		purchase.setProductPurchase(productConvert.productsDtoConvertToProducts(purchaseDto.getProducts()));
-		
-		return purchase;
-	}
-	
-	public PurchaseDto convertPurchaseToPurchaseDto(Purchase purchase) {
-		if(purchase == null) {
-			return null;
-		}
-		
-		PurchaseDto purchaseDto = new PurchaseDto();
-		
-		purchaseDto.setId(purchase.getPurchaseId());
-		purchaseDto.setLocalDateTime(purchase.getLocalDateTime());
-		purchaseDto.setUser(userConvert.userConvertToUserDto(purchase.getUser()));
-		purchaseDto.setPurchaseStatus(purchaseStatusConvert.convertPurchaseStatusToPurchaseStatusDto(purchase.getPurchaseStatus()));
-		purchaseDto.setProducts(productConvert.productsConvertToProductsDto(purchase.getProductsPurchase()));
-		
-		return purchaseDto;
-	}
-	
-	public List<Purchase> convertPurchasesDtoToPurchases(List<PurchaseDto> purchaseDtos){
-		if(purchaseDtos == null) {
-			return null;
-		}
-		
-		List<Purchase> purchases = new ArrayList<Purchase>();
-		
-		for(PurchaseDto purchaseDto : purchaseDtos) {
-			purchases.add(convertPurchaseDtoToPurchase(purchaseDto));
-		}
-		
-		return purchases;
-	}
-	
 	public PurchaseResponse purchaseConvertToPurchaseResponse(Purchase purchase) {
 		PurchaseResponse purchaseResponse = new PurchaseResponse(
-				purchase.getPurchaseId(),
-				userConvert.userDtoConvertToUserResponse(userConvert.userConvertToUserDto(purchase.getUser())),
-			    productConvert.productsConverToProductsResponse(purchase.getProductsPurchase()),
+				purchase.getId(),
+			    productConvert.productsConverToProductsResponse(purchase.getProducts()),
 			    purchaseStatusConvert.purchaseStatusConvertToPurchaseStatusResponse(purchase.getPurchaseStatus()),
+			    purchase.getAddress(),
 			    purchase.getLocalDateTime()
 			    );
 		
@@ -105,7 +56,7 @@ public class PurchaseConvert {
 		List<Product> products = new ArrayList<Product>();
 		List<Integer> productsId  = purchaseRequest.getProducts();
 		for(Integer integer : productsId) {
-			products.add(productConvert.productDtoConvertToProduct(productDao.getProductById(integer)));
+			products.add(productDao.getProductById(integer));
 		}
 		
 		return products;
@@ -115,7 +66,7 @@ public class PurchaseConvert {
 		List<Product> products = new ArrayList<Product>();
 		List<Integer> productsId  = purchaseRequestUpdate.getProductsId();
 		for(Integer integer : productsId) {
-			products.add(productConvert.productDtoConvertToProduct(productDao.getProductById(integer)));
+			products.add(productDao.getProductById(integer));
 		}
 		
 		return products;

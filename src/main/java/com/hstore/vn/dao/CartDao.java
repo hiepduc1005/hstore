@@ -1,19 +1,20 @@
 package com.hstore.vn.dao;
 
 
-import com.hstore.vn.payload.CartDto;
+import com.hstore.vn.entity.Cart;
+
 
 public interface CartDao {
 	
-	CartDto getCartByUserEmail(String email);
+	Cart getCartByUserId(Integer id);
 	
 	void addProductToCart(Integer productId);
 	
 	void deleteProductToCart(Integer productId);
 	
-	CartDto createCart(CartDto cartDto);
+	Cart createCart(Cart cartDto);
 	
-	CartDto findCartById(Integer cartId);
+	Cart findCartById(Integer cartId);
 	
-	void updateCart(CartDto cartDto);
+	void updateCart(Cart cartDto);
 }

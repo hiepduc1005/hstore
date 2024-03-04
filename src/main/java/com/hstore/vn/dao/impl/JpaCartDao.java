@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Cart;
+import com.hstore.vn.entity.Product;
+import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.cart.CartNotFoundException;
 import com.hstore.vn.exception.product.NotFoundProductException;
 import com.hstore.vn.exception.user.UserNotFoundException;
-import com.hstore.vn.payload.CartDto;
-import com.hstore.vn.payload.ProductDto;
-import com.hstore.vn.payload.UserDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -45,17 +45,17 @@ public class JpaCartDao implements CartDao{
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		
-		UserDto userDto = userDao.getUserByEmail(username);
+		User userDto = userDao.getUserByEmail(username);
 		if(userDto == null) {
 			throw new UserNotFoundException("Can not found user with email : " + username);
 		}
-		CartDto cartDto = findCartById(userDto.getCart().getId());
+		Cart cartDto = findCartById(userDto.getCart().getId());
 		if(cartDto == null) {
 			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
 		}
 		
-		List<ProductDto> productDtos = cartDto.getProducts();
-		ProductDto productDto = productDao.getProductById(productId);
+		List<Product> productDtos = cartDto.getProducts();
+		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);
 		}	
@@ -72,20 +72,20 @@ public class JpaCartDao implements CartDao{
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
 		
-		UserDto userDto = userDao.getUserByEmail(username);
+		User userDto = userDao.getUserByEmail(username);
 		if(userDto == null) {
 			throw new UserNotFoundException("Can not found user with email : " + username);
 		}
-		CartDto cartDto = findCartById(userDto.getCart().getId());
+		Cart cartDto = findCartById(userDto.getCart().getId());
 		if(cartDto == null) {
 			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
 		}
 		
-		List<ProductDto> productDtos = cartDto.getProducts();
+		List<Product> productDtos = cartDto.getProducts();
 		if(productDtos == null) {
 			throw new NotFoundProductException("Not found any product in cart");
 		}
-		ProductDto productDto = productDao.getProductById(productId);
+		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);
 		}
@@ -98,22 +98,22 @@ public class JpaCartDao implements CartDao{
 
 	@Transactional
 	@Override
-	public CartDto createCart(CartDto cartDto) {
+	public Cart createCart(Cart cartDto) {
 		return entityManager.merge(cartDto);
 	}
 	
 	
 	@Transactional
 	@Override
-	public void updateCart(CartDto cartDto) {
+	public void updateCart(Cart cartDto) {
 		 entityManager.merge(cartDto);
 	}
 	
 	@Transactional
 	@Override
-	public CartDto findCartById(Integer cartId) {
+	public Cart findCartById(Integer cartId) {
 		try {
-			CartDto cartDto = entityManager.find(CartDto.class, cartId);
+			Cart cartDto = entityManager.find(Cart.class, cartId);
 			if(cartDto == null) {
 				throw new CartNotFoundException("Can not found cart with id : " + cartId);
 			}
@@ -127,14 +127,14 @@ public class JpaCartDao implements CartDao{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public CartDto getCartByUserEmail(String email) {
-		Query query = entityManager.createNativeQuery("SELECT cart_id FROM user WHERE email = :email",Integer.class);
-		query.setParameter("email", email);
-		Integer cartId = (Integer) query.getResultList().stream().findFirst().orElse(null);
-		if(cartId == null) {
-			throw new UserNotFoundException("Can not found user with email " + email);
+	public Cart getCartByUserId(Integer id) {
+		Query query = entityManager.createNativeQuery("SELECT * FROM cart WHERE user_id = :user_id",Cart.class);
+		query.setParameter("user_id", id);
+		Cart cart = (Cart) query.getResultList().stream().findFirst().orElse(null);
+		if(cart == null) {
+			throw new UserNotFoundException("Can not found user with id " + id);
 		}
-		return findCartById(cartId);
+		return cart;
 	}	
 
 

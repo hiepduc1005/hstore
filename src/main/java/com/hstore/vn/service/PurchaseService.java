@@ -1,5 +1,6 @@
 package com.hstore.vn.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.hstore.vn.entity.Purchase;
@@ -20,5 +21,12 @@ public interface PurchaseService {
 	void deletePurchase(Integer purchaseId);
 	
 	void updatePurchase(Purchase purchase);
+	
+	
+	Double getTotalsMoneyByPurchase(Purchase purchaseDto);
+	
+	BigDecimal getTotalsMoneyInPurchaseWithAuthenticatedUser();
+	
+	List<Purchase> getPurchasesByUserId(Integer userId);
 
 }

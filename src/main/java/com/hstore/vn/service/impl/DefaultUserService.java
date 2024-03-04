@@ -10,14 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.CartDao;
+import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Cart;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
-import com.hstore.vn.payload.CartDto;
-import com.hstore.vn.payload.UserDto;
-import com.hstore.vn.payload.converter.RoleConvert;
-import com.hstore.vn.payload.converter.UserConvert;
 import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
 
@@ -25,13 +23,7 @@ import com.hstore.vn.service.UserService;
 public class DefaultUserService implements UserService{
 	
 	@Autowired
-	public UserConvert userConvert;
-	
-	@Autowired
 	public UserDao userDao;
-	
-	@Autowired
-	public RoleConvert roleConvert;
 	
 	@Autowired
 	public RoleDao roleDao;
@@ -46,8 +38,11 @@ public class DefaultUserService implements UserService{
 	public CartDao cartDao;
 	
 	
+	@Autowired
+	public PurchaseDao purchaseDao;
+	
 	@Override
-	public void registerUser(UserDto user ,String refferedUserPartnerCode) {
+	public void registerUser(User user ,String refferedUserPartnerCode) {
 		//handle exception
 		String userEmailSignup = user.getEmail();
 		if(userDao.getUserByEmail(userEmailSignup) != null) {
@@ -63,7 +58,7 @@ public class DefaultUserService implements UserService{
 		else {
 			 user.setReffererUser(null);
 		}
-		CartDto cartDto = new CartDto();
+		Cart cartDto = new Cart();
 		cartDto = cartDao.createCart(cartDto);
 		user.setCart(cartDto);
         user.setPartnerCode(partnerCode.genneratePartnerCode());
@@ -73,13 +68,13 @@ public class DefaultUserService implements UserService{
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         
-        userDao.saveUser(user);
-        
-		
+        User user2 = userDao.saveUser(user);
+        cartDto.setUser(user2);
+		cartDao.updateCart(cartDto);
 	}
 	
 	@Override
-	public void createUser(UserDto user, String refferedUserPartnerCode) {
+	public void createUser(User user, String refferedUserPartnerCode) {
 		String userEmailSignup = user.getEmail();
 		if(userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
@@ -93,7 +88,7 @@ public class DefaultUserService implements UserService{
 			 user.setReffererUser(null);
 		}
 		
-	  CartDto cartDto = new CartDto();
+	  Cart cartDto = new Cart();
 	  cartDto = cartDao.createCart(cartDto);
 	  user.setCart(cartDto);
       user.setPartnerCode(partnerCode.genneratePartnerCode());
@@ -109,38 +104,39 @@ public class DefaultUserService implements UserService{
 
 	@Override
 	public void updateUser(User user) {
-		userDao.updateUser(userConvert.userConvertToUserDto(user));
+		userDao.updateUser(user);
 	}
 
 	@Override
 	public User getUserById(Integer id) {
-		return userConvert.userDtoConvertToUser(userDao.getUserById(id));
+		return userDao.getUserById(id);
 	}
 
 	@Override
 	public User getUserByEmail(String email) {
 		// TODO Auto-generated method stub
-		return userConvert.userDtoConvertToUser(userDao.getUserByEmail(email));
+		return userDao.getUserByEmail(email);
 	}
 
 	@Override
 	public User getUserByPartnerCode(String partnerCode) {
 		// TODO Auto-generated method stub
-		return userConvert.userDtoConvertToUser(userDao.getUserByPartnerCode(partnerCode));
+		return userDao.getUserByPartnerCode(partnerCode);
 	}
 
 	@Override
 	public List<User> getRefferedByUserId(Integer id) {
-		return userConvert.usersDtoConvertToUsers(userDao.getRefferedByUserId(id));
+		return userDao.getRefferedByUserId(id);
 	}
 
 	@Override
-	public List<UserDto> getAllUser() {
+	public List<User> getAllUser() {
 		return userDao.getAllUsers();
 	}
 
 	@Override
 	public void deleteUser(Integer id) {
+		purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);
 	}
 

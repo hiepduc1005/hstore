@@ -24,7 +24,7 @@ public interface CartService {
 	
 	Cart createCart(Cart cartDto);
 	
-	Cart getCartByUserEmail(String email);
+	Cart getCartByUserId(Integer id);
 	
 	Cart getCartById(Integer cartId);
 }

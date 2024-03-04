@@ -3,14 +3,13 @@ package com.hstore.vn.service;
 import java.util.List;
 
 import com.hstore.vn.entity.User;
-import com.hstore.vn.payload.UserDto;
 
 
 public interface UserService {
 	
-	void registerUser(UserDto user , String refferedUserPartnerCode);
+	void registerUser(User user , String refferedUserPartnerCode);
 	
-	void createUser(UserDto user , String refferedUserPartnerCode);
+	void createUser(User user , String refferedUserPartnerCode);
 	
 	void updateUser(User user);
 	
@@ -22,7 +21,7 @@ public interface UserService {
 	
 	List<User> getRefferedByUserId(Integer id);
 	
-	List<UserDto> getAllUser();
+	List<User> getAllUser();
 	
 	void deleteUser(Integer id);
 

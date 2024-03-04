@@ -2,18 +2,18 @@ package com.hstore.vn.dao;
 
 import java.util.List;
 
-import com.hstore.vn.payload.CategoryDto;
+import com.hstore.vn.entity.Category;
 
 
 public interface CategoryDao {
 	
-	CategoryDto getCategoryByName(String name);
+	Category getCategoryByName(String name);
 	
-	CategoryDto getCategoryById(Integer id);
+	Category getCategoryById(Integer id);
 	
-	List<CategoryDto> getAllCategories();
+	List<Category> getAllCategories();
 	
-	void createCategory(CategoryDto categoryDto);
+	void createCategory(Category categoryDto);
 	
 	void deleteCategory(Integer id);
 }

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.CategoryDao;
+import com.hstore.vn.entity.Category;
 import com.hstore.vn.exception.category.NotFoundCategoryException;
-import com.hstore.vn.payload.CategoryDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -22,12 +22,12 @@ public class JpaCategoryDao implements CategoryDao{
 
 	@Transactional
 	@Override
-	public CategoryDto getCategoryByName(String name) {
-		TypedQuery<CategoryDto> typedQuery = entityManager.createQuery(
-				"SELECT c FROM category c WHERE c.name = :name",CategoryDto.class);
+	public Category getCategoryByName(String name) {
+		TypedQuery<Category> typedQuery = entityManager.createQuery(
+				"SELECT c FROM category c WHERE c.name = :name",Category.class);
 		
 		typedQuery.setParameter("name", name);
-		CategoryDto categoryDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		Category categoryDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 		if(categoryDto == null) {
 			throw new NotFoundCategoryException("Not found category with name = " + name);
 		}
@@ -36,11 +36,11 @@ public class JpaCategoryDao implements CategoryDao{
 
 	@Transactional
 	@Override
-	public CategoryDto getCategoryById(Integer id) {
+	public Category getCategoryById(Integer id) {
 		if(id == null || id < 1) {
 			throw new IllegalArgumentException("Not found cagegory");
 		}
-		CategoryDto categoryDto = entityManager.find(CategoryDto.class, id);
+		Category categoryDto = entityManager.find(Category.class, id);
 		
 		if(categoryDto == null) {
 			throw new NotFoundCategoryException("Can not found category with id : " + id);
@@ -51,10 +51,10 @@ public class JpaCategoryDao implements CategoryDao{
 
 	@Transactional
 	@Override
-	public List<CategoryDto> getAllCategories() {
-		TypedQuery<CategoryDto> typedQuery = entityManager.createQuery(
-				"SELECT c FROM category c",CategoryDto.class);
-		List<CategoryDto> categoryDtos = typedQuery.getResultList();
+	public List<Category> getAllCategories() {
+		TypedQuery<Category> typedQuery = entityManager.createQuery(
+				"SELECT c FROM category c",Category.class);
+		List<Category> categoryDtos = typedQuery.getResultList();
 		if(categoryDtos.isEmpty()) {
 			throw new NotFoundCategoryException("Not found any category");
 		}
@@ -63,7 +63,7 @@ public class JpaCategoryDao implements CategoryDao{
 
 	@Transactional
 	@Override
-	public void createCategory(CategoryDto categoryDto) {
+	public void createCategory(Category categoryDto) {
 		try {
 			entityManager.merge(categoryDto);
 		}catch (Exception e) {

@@ -15,10 +15,10 @@ import com.hstore.vn.dao.PrivilegeDao;
 import com.hstore.vn.dao.PurchaseStatusDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
-import com.hstore.vn.payload.PurchaseStatusDto;
-import com.hstore.vn.payload.PrivilegeDto;
-import com.hstore.vn.payload.RoleDto;
-import com.hstore.vn.payload.UserDto;
+import com.hstore.vn.entity.Privilege;
+import com.hstore.vn.entity.PurchaseStatus;
+import com.hstore.vn.entity.Role;
+import com.hstore.vn.entity.User;
 
 
 
@@ -65,20 +65,23 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 			return;
 		}
 		
-		PrivilegeDto readPrivilege = createPrivilegeIfNotFound(READ_PRIVILEGE);
-		PrivilegeDto writePrivilege = createPrivilegeIfNotFound(WRITE_PRIVILEGE);
-		PrivilegeDto deletePrivilege = createPrivilegeIfNotFound(DELETE_PRIVILEGE);
+		Privilege readPrivilege = createPrivilegeIfNotFound(READ_PRIVILEGE);
+		Privilege writePrivilege = createPrivilegeIfNotFound(WRITE_PRIVILEGE);
+		Privilege deletePrivilege = createPrivilegeIfNotFound(DELETE_PRIVILEGE);
 		
 		createRoleIfNotFound(ROLE_CUSTOMER,Arrays.asList(readPrivilege));
 		createRoleIfNotFound(ROLE_MANAGER,Arrays.asList(readPrivilege,writePrivilege));
 		createRoleIfNotFound(ROLE_ADMIN,Arrays.asList(readPrivilege,writePrivilege,deletePrivilege));
 		
 		createOrderStatusIfNotFound(RECEIVE_REQUEST);
+		createOrderStatusIfNotFound(SHIPPING);
+		createOrderStatusIfNotFound(SHIPPED);
         createOrderStatusIfNotFound(WAITING_FOR_PAYMENT);
-        createOrderStatusIfNotFound(COMPLETED);
         createOrderStatusIfNotFound(PAYED);
-        createOrderStatusIfNotFound(SHIPPED);
-        createOrderStatusIfNotFound(SHIPPING);
+        createOrderStatusIfNotFound(COMPLETED);
+       
+       
+       
         
 //        createUserIfNotFound(roleAdmin,"admin@gmail.com","admin");
 //        createUserIfNotFound(roleManager,"manager@gmail.com" ,"manager");
@@ -91,11 +94,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	
-	private void createUserIfNotFound(RoleDto roleDto , String email , String password) {
-		UserDto userDto = userDao.getUserByEmail(email);
+	private void createUserIfNotFound(Role roleDto , String email , String password) {
+		User userDto = userDao.getUserByEmail(email);
 		passwordEncoder = new BCryptPasswordEncoder();
 		if(userDto == null) {
-			userDto = new UserDto();
+			userDto = new User();
 			userDto.setEmail(email);
 			userDto.setFirstName("Admin");
 			userDto.setLastName("Admin");
@@ -108,11 +111,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	
-	private RoleDto createRoleIfNotFound(String roleName , List<PrivilegeDto> privilegeDtos) {
+	private Role createRoleIfNotFound(String roleName , List<Privilege> privilegeDtos) {
 		
-		RoleDto roleDto = roleDao.getRoleByName(roleName);
+		Role roleDto = roleDao.getRoleByName(roleName);
 		if(roleDto == null ) {
-			roleDto = new RoleDto();
+			roleDto = new Role();
 			roleDto.setName(roleName);
 			roleDto.setPrivileges(privilegeDtos);
 			roleDao.save(roleDto);
@@ -121,10 +124,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		
 	}
 	
-	private PrivilegeDto createPrivilegeIfNotFound(String name ) {
-		PrivilegeDto privilegeDto = privilegeDao.getPrivilegeByName(name);
+	private Privilege createPrivilegeIfNotFound(String name ) {
+		Privilege privilegeDto = privilegeDao.getPrivilegeByName(name);
 		if(privilegeDto == null) {
-			privilegeDto = new PrivilegeDto();
+			privilegeDto = new Privilege();
 			privilegeDto.setName(name);
 			privilegeDao.save(privilegeDto);
 		}
@@ -132,9 +135,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	}
 	
 	private void createOrderStatusIfNotFound(String statusName) {
-		PurchaseStatusDto orderStatusDto = orderStatusDao.getPurchaseStatusByName(statusName);
+		PurchaseStatus orderStatusDto = orderStatusDao.getPurchaseStatusByName(statusName);
 		if(orderStatusDto == null) {
-			orderStatusDto = new PurchaseStatusDto();
+			orderStatusDto = new PurchaseStatus();
 			orderStatusDto.setStatusName(statusName);
 			orderStatusDao.savePurchaseStatus(orderStatusDto);
 		}

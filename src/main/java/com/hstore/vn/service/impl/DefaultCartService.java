@@ -9,11 +9,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.CartDao;
+import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Cart;
 import com.hstore.vn.entity.Product;
-import com.hstore.vn.payload.CartDto;
-import com.hstore.vn.payload.converter.CartConvert;
-import com.hstore.vn.payload.converter.ProductConvert;
+import com.hstore.vn.entity.User;
 import com.hstore.vn.service.CartService;
 
 
@@ -24,14 +23,13 @@ public class DefaultCartService implements CartService{
 	public CartDao cartDao;
 	
 	@Autowired
-	public CartConvert cartConvert;
+	public UserDao userDao;
 	
-	@Autowired
-	public ProductConvert productConvert;
+	
 	
 	@Override
 	public Integer getNumbersOfProductInCart(Integer cartId) {
-		CartDto cartDto = cartDao.findCartById(cartId);
+		Cart cartDto = cartDao.findCartById(cartId);
 		return cartDto.getProducts().size();
 	}
 
@@ -39,13 +37,13 @@ public class DefaultCartService implements CartService{
 
 	@Override
 	public List<Product> getProductsInCart(Integer cartId) {
-		CartDto cartDto = cartDao.findCartById(cartId);
-		return productConvert.productsDtoConvertToProducts(cartDto.getProducts());
+		Cart cartDto = cartDao.findCartById(cartId);
+		return cartDto.getProducts();
 	}
 
 	@Override
 	public void updateCart(Cart cart) {
-		cartDao.updateCart(cartConvert.cartConvertToCartDto(cart));
+		cartDao.updateCart(cart);
 	}
 
 	@Override
@@ -60,20 +58,20 @@ public class DefaultCartService implements CartService{
 	}
 
 	@Override
-	public Cart createCart(Cart cartDto) {
+	public Cart createCart(Cart cart) {
 		// TODO Auto-generated method stub
-		return cartConvert.cartDtoConvertToCart(cartDao.createCart(cartConvert.cartConvertToCartDto(cartDto)));
+		return cartDao.createCart(cart);
 	}
 
-	@Override
-	public Cart getCartByUserEmail(String email) {
-		return cartConvert.cartDtoConvertToCart(cartDao.getCartByUserEmail(email));
+	@Override 
+	public Cart getCartByUserId(Integer id) {
+		return cartDao.getCartByUserId(id);
 	}
 
 	@Override
 	public Cart getCartById(Integer cartId) {
 		// TODO Auto-generated method stub
-		return cartConvert.cartDtoConvertToCart(cartDao.findCartById(cartId));
+		return cartDao.findCartById(cartId);
 	}
 
 
@@ -82,8 +80,9 @@ public class DefaultCartService implements CartService{
 	public BigDecimal getTotalPriceInCartByAuthenticatedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
+	    User user = userDao.getUserByEmail(username);
 		
-		Cart cart = getCartByUserEmail(username);
+		Cart cart = getCartByUserId(user.getId());
 		List<Product> products = cart.getProducts();
 		BigDecimal totalPrice = BigDecimal.ZERO;
 		
@@ -92,9 +91,8 @@ public class DefaultCartService implements CartService{
 		}
 		
 		for(Product product : products) {
-			totalPrice.add(product.getPrice());
+			totalPrice = totalPrice.add(product.getPrice());
 		}
-		
 		return totalPrice;
 	}
 

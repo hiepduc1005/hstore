@@ -2,24 +2,25 @@ package com.hstore.vn.dao;
 
 import java.util.List;
 
-import com.hstore.vn.payload.PurchaseDto;
+import com.hstore.vn.entity.Purchase;
 
 
 public interface PurchaseDao {
 	
-	void savePurchase(PurchaseDto PurchaseDto);
+	void savePurchase(Purchase PurchaseDto);
 	
-	void updatePurchase(PurchaseDto PurchaseDto);
+	void updatePurchase(Purchase PurchaseDto);
 	
-	PurchaseDto getPurchaseById(Integer id);
+	Purchase getPurchaseById(Integer id);
 	
-	List<PurchaseDto> getPurchasesByUserId(Integer userId);
+	List<Purchase> getPurchasesByUserId(Integer userId);
 	
-	List<PurchaseDto> getAllPurchases();
+	List<Purchase> getAllPurchases();
 	
-	List<PurchaseDto> getNotCompletedPurchases(Integer completedPurchaseStatusId);
+	List<Purchase> getNotCompletedPurchases(Integer completedPurchaseStatusId);
 	
 	void deletePurchaseById(Integer purchaseId);
 	
+	void deletePurchaseByUserId(Integer userId);
 
 }

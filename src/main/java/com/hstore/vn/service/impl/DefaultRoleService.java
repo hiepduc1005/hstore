@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.entity.Role;
-import com.hstore.vn.payload.converter.RoleConvert;
 import com.hstore.vn.service.RoleService;
 
 
@@ -13,8 +12,6 @@ import com.hstore.vn.service.RoleService;
 @Service
 public class DefaultRoleService implements RoleService{
 	
-	@Autowired
-	public RoleConvert roleConvert;
 	
 	@Autowired
 	public RoleDao roleDao;
@@ -22,13 +19,13 @@ public class DefaultRoleService implements RoleService{
 	@Override
 	public Role getRoleByName(String name) {
 		// TODO Auto-generated method stub
-		return roleConvert.roleDtoConvertToRole(roleDao.getRoleByName(name));
+		return roleDao.getRoleByName(name);
 	}
 
 	@Override
 	public Role getRoleById(Integer id) {
 		// TODO Auto-generated method stub
-		return roleConvert.roleDtoConvertToRole(roleDao.getRoleById(id));
+		return roleDao.getRoleById(id);
 	}
 
 }

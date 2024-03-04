@@ -7,7 +7,7 @@ import com.hstore.vn.entity.Product;
 
 public interface ProductService {
 	
-	void saveProduct(Product product);
+	Product saveProduct(Product product);
 	
 	Product getProductByGuid(String guid);
 	

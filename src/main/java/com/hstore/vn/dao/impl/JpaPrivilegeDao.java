@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.PrivilegeDao;
+import com.hstore.vn.entity.Privilege;
 import com.hstore.vn.exception.privilege.PrivilegeNotFoundException;
-import com.hstore.vn.payload.PrivilegeDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -19,19 +19,19 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 	
 	@Transactional
 	@Override
-	public void save(PrivilegeDto privilegeDto) {
+	public void save(Privilege privilegeDto) {
 		entityManager.merge(privilegeDto);
 		
 	}
 
 	@Transactional
 	@Override
-	public PrivilegeDto getPrivilegeByName(String name) {
-		TypedQuery<PrivilegeDto> typedQuery = entityManager.createQuery("SELECT p FROM privilege p"
-				+ " WHERE p.name = :name",PrivilegeDto.class);
+	public Privilege getPrivilegeByName(String name) {
+		TypedQuery<Privilege> typedQuery = entityManager.createQuery("SELECT p FROM privilege p"
+				+ " WHERE p.name = :name",Privilege.class);
 		
 		typedQuery.setParameter("name",name);
-		PrivilegeDto privilegeDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		Privilege privilegeDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 
 		if(privilegeDto == null) {
 			throw new PrivilegeNotFoundException("Can not found privilege with name : " + name);
@@ -42,8 +42,8 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 
 	@Transactional
 	@Override
-	public PrivilegeDto getPrivilegeById(Integer id) {
-		PrivilegeDto privilegeDto = entityManager.find(PrivilegeDto.class, id);
+	public Privilege getPrivilegeById(Integer id) {
+		Privilege privilegeDto = entityManager.find(Privilege.class, id);
 		
 		if(privilegeDto == null) {
 			throw new PrivilegeNotFoundException("Can not found privilege with name : " + id);

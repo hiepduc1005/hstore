@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
-import com.hstore.vn.payload.UserDto;
 import com.hstore.vn.payload.request.LoginRequest;
 import com.hstore.vn.payload.request.RegistrationRequest;
 import com.hstore.vn.payload.response.ApiResponse;
@@ -56,7 +56,7 @@ public class AuthController {
 			throw new EmailAlreadyExitsException("email already exist !");
 		}
 		
-		UserDto userDto = new UserDto();
+		User userDto = new User();
 		userDto.setEmail(registrationRequest.getEmail());
 		userDto.setFirstName(registrationRequest.getFirstName());
 		userDto.setLastName(registrationRequest.getLastName());

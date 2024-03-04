@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.RoleDao;
+import com.hstore.vn.entity.Role;
 import com.hstore.vn.exception.privilege.PrivilegeNotFoundException;
-import com.hstore.vn.payload.RoleDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -19,14 +19,14 @@ public class JpaRoleDao implements RoleDao{
 	
 	@Transactional
 	@Override
-	public void save(RoleDto roleDto) {
+	public void save(Role roleDto) {
 		entityManager.merge(roleDto);
 	}
 
 	@Transactional
 	@Override
-	public RoleDto getRoleById(Integer id) {
-		RoleDto roleDto = entityManager.find(RoleDto.class, id);
+	public Role getRoleById(Integer id) {
+		Role roleDto = entityManager.find(Role.class, id);
 		
 		if(roleDto == null) {
 			throw new PrivilegeNotFoundException("Can not found role with name : " + id);
@@ -37,10 +37,10 @@ public class JpaRoleDao implements RoleDao{
 
 	@Transactional
 	@Override
-	public RoleDto getRoleByName(String name) {
-		TypedQuery<RoleDto> typedQuery = entityManager.createQuery("SELECT r FROM role r WHERE r.name = :name",RoleDto.class);
+	public Role getRoleByName(String name) {
+		TypedQuery<Role> typedQuery = entityManager.createQuery("SELECT r FROM role r WHERE r.name = :name",Role.class);
 		typedQuery.setParameter("name", name);
-	    RoleDto roleDto	= typedQuery.getResultList().stream().findFirst().orElse(null);
+	    Role roleDto	= typedQuery.getResultList().stream().findFirst().orElse(null);
 	    
 	    if(roleDto == null) {
 			throw new PrivilegeNotFoundException("Can not found role with name : " + name);
@@ -48,5 +48,7 @@ public class JpaRoleDao implements RoleDao{
 	    
 		return roleDto;
 	}
+
+	
 
 }

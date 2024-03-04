@@ -1,5 +1,6 @@
 package com.hstore.vn.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,12 @@ import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.PurchaseStatusDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
-import com.hstore.vn.entity.impl.DefaultPurchase;
 import com.hstore.vn.payload.converter.PurchaseConvert;
 import com.hstore.vn.payload.request.PurchaseRequest;
 import com.hstore.vn.payload.request.PurchaseRequestUpdate;
 import com.hstore.vn.payload.response.ApiResponse;
 import com.hstore.vn.payload.response.PurchaseResponse;
+import com.hstore.vn.payload.response.TotalPriceResponse;
 import com.hstore.vn.service.PurchaseService;
 
 @RestController
@@ -80,12 +81,25 @@ public class PurchaseController {
 			);
 	}
 	
+	@GetMapping("/purchase/{id}/total-price")
+	public ApiResponse<ResponseEntity<TotalPriceResponse>> getTotalPrice(@PathVariable Integer id){
+		Purchase purchaseDto =purchaseService.getPurchaseById(id);
+		BigDecimal totalPrice = BigDecimal.valueOf(purchaseService.getTotalsMoneyByPurchase(purchaseDto));
+		
+		return new ApiResponse<ResponseEntity<TotalPriceResponse>>(
+				"Get total price in purchase with id : " + id + " success!",
+				new ResponseEntity<TotalPriceResponse>(new TotalPriceResponse(totalPrice),HttpStatus.OK)
+				,0
+			);
+	}
+	
 	
 	
 	@PostMapping("/purchase")
 	public ApiResponse<ResponseEntity<PurchaseResponse>> createPurchase(@RequestBody PurchaseRequest purchaseRequest){
-		Purchase purchase = new DefaultPurchase();
-		purchase.setProductPurchase(purchaseConvert.purchaseRequestToListProduct(purchaseRequest));
+		Purchase purchase = new Purchase();
+		purchase.setProducts(purchaseConvert.purchaseRequestToListProduct(purchaseRequest));
+		purchase.setAddress(purchaseRequest.getAddress());
 		Purchase purchaseSaved = purchaseService.savePurchase(purchase);
 		
 		PurchaseResponse purchaseResponse = purchaseConvert.purchaseConvertToPurchaseResponse(purchaseSaved);
@@ -97,7 +111,7 @@ public class PurchaseController {
 			);
 	}
 	
-	@PostMapping("/purchase/upstatus-to-one-stage/{purchaseId}")
+	@PostMapping("/purchase/{purchaseId}/upstatus-to-one-stage")
 	public ApiResponse<ResponseEntity<PurchaseResponse>> updatePurchaseStatusUpToOneStageByPurchaseId(
 			@PathVariable Integer purchaseId){
 		Purchase purchase = purchaseService.updateStatusPurchaseByPurchaseIdUpToOneStage(purchaseId);
@@ -115,7 +129,7 @@ public class PurchaseController {
 		Purchase purchase = purchaseService.getPurchaseById(purchaseRequestUpdate.getId());
 		List<Product> products = purchaseConvert.purchaseRequestUpdateToListProduct(purchaseRequestUpdate);
 		
-		purchase.setProductPurchase(products);
+		purchase.setProducts(products);
 		PurchaseResponse purchaseResponse = purchaseConvert.purchaseConvertToPurchaseResponse(purchase);
 		
 		purchaseService.updatePurchase(purchase);

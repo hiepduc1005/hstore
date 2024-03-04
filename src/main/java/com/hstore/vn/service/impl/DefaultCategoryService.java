@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.CategoryDao;
 import com.hstore.vn.entity.Category;
-import com.hstore.vn.payload.converter.CategoryConvert;
 import com.hstore.vn.service.CategoryService;
 
 
@@ -17,31 +16,28 @@ public class DefaultCategoryService implements CategoryService{
 	@Autowired
 	public CategoryDao categoryDao;
 	
-	@Autowired
-	public CategoryConvert categoryConvert;
-
 	@Override
 	public Category getCategoryByName(String name) {
 		// TODO Auto-generated method stub
-		return categoryConvert.categoryDtoConvertToCategory(
-				categoryDao.getCategoryByName(name));
+		return 
+				categoryDao.getCategoryByName(name);
 	}
 
 	@Override
 	public Category getCategoryById(Integer id) {
 		// TODO Auto-generated method stub
-		return categoryConvert.categoryDtoConvertToCategory(
-				categoryDao.getCategoryById(id));
+		return 
+				categoryDao.getCategoryById(id);
 	}
 
 	@Override
 	public List<Category> getAllCategories() {
-		return categoryConvert.categoriesDtoConvertToCategories(categoryDao.getAllCategories());
+		return categoryDao.getAllCategories();
 	}
 
 	@Override
 	public void createCategory(Category category) {
-		categoryDao.createCategory(categoryConvert.categoryConvertToCategoryDto(category));
+		categoryDao.createCategory(category);
 	}
 
 	@Override

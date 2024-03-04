@@ -111,19 +111,19 @@ public class ProductController {
 		
 		Product product = productConvert.productRequestConvertToProduct(productRequest);
 		
-		productService.saveProduct(product);
+	    Product newPro = productService.saveProduct(product);
 		
 		CategoryResponse categoryResponse = categoryConvert.categoryConvertToCategoryResponse(product.getCategory());
 	
 		ResponseEntity<ProductResponse> re = new ResponseEntity<ProductResponse>(
 				new ProductResponse(
-						product.getProductId(),
-						product.getProductName(),
+						newPro.getId(),
+						newPro.getName(),
 						categoryResponse,
-						product.getPrice(),
-						product.getProductDescription(),
-						product.getImg(),
-						product.getProductGUID()
+						newPro.getPrice(),
+						newPro.getDescription(),
+						newPro.getImgName(),
+						newPro.getGuid()
 						),
 				HttpStatus.ACCEPTED);
 		
@@ -149,7 +149,7 @@ public class ProductController {
 		
 		ApiResponse<ResponseEntity<ProductResponse>> apiResponse =
 				new ApiResponse<ResponseEntity<ProductResponse>>(
-						"Update product with id " + product.getProductId() + " successful", re, 0);
+						"Update product with id " + product.getId() + " successful", re, 0);
 		
 		return apiResponse;
 		

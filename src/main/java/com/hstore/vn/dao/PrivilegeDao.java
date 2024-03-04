@@ -1,14 +1,14 @@
 package com.hstore.vn.dao;
 
-import com.hstore.vn.payload.PrivilegeDto;
+import com.hstore.vn.entity.Privilege;
 
 public interface PrivilegeDao {
 	
-	void save(PrivilegeDto privilegeDto);
+	void save(Privilege privilegeDto);
 	
-	PrivilegeDto getPrivilegeByName(String name);
+	Privilege getPrivilegeByName(String name);
 	
-	PrivilegeDto getPrivilegeById(Integer id);
+	Privilege getPrivilegeById(Integer id);
 	
 	
 
