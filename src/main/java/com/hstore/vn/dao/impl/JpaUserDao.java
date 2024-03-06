@@ -46,18 +46,24 @@ public class JpaUserDao implements UserDao {
 		em.merge(user);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public User getUserByEmail(String email) {
-	    TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.email = :email",User.class);
+		System.out.println(email);
 		
-	    typedQuery.setParameter("email",email); 
-	    User userDto = typedQuery.getResultList().stream().findFirst().orElse(null);
-	    if(userDto != null) {
-	    	userDto.enabled = true;
+		Query query = em.createNativeQuery("SELECT * FROM user WHERE email = :email" , User.class);
+		
+//	    TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.email = :email",User.class);
+		
+		query.setParameter("email",email); 
+	    User user = (User) query.getResultList().stream().findFirst().orElse(null);
+	   
+	    if(user != null) {
+	    	user.enabled = true;
 	    }
 	    
-		return userDto;
+		return user;
 	}
 	
 

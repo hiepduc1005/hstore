@@ -53,7 +53,7 @@ public class DefaultUserService implements UserService{
 				roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER)));
 		if(!refferedUserPartnerCode.isEmpty()) {
 			  user.setReffererUser(
-        		userDao.getUserByPartnerCode(refferedUserPartnerCode));
+        		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
 		}
 		else {
 			 user.setReffererUser(null);
@@ -82,7 +82,7 @@ public class DefaultUserService implements UserService{
 		
 		if(!refferedUserPartnerCode.isEmpty()) {
 			  user.setReffererUser(
-      		userDao.getUserByPartnerCode(refferedUserPartnerCode));
+      		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
 		}
 		else {
 			 user.setReffererUser(null);
@@ -136,6 +136,12 @@ public class DefaultUserService implements UserService{
 
 	@Override
 	public void deleteUser(Integer id) {
+		User user = getUserById(id);
+		User inviteUser = getUserByPartnerCode(user.getPartnerCode());
+		if(inviteUser != null) {
+			userDao.deleteUser(inviteUser.getId());
+		}
+		
 		purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);
 	}

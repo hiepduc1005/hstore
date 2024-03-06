@@ -85,7 +85,9 @@ public class DefaultPurchaseService implements PurchaseService {
 		int newStatusId = currentStatus.getId() + 1;
 		
         User userDto = purchase.getUser();
-		User inviteUser = userDto.getReffererUser();
+		Integer inviteUserId = userDto.getReffererUser();
+		User inviteUser = userService.getUserById(inviteUserId);
+		
 		BigDecimal moneyReward = BigDecimal
 				.valueOf(getTotalsMoneyByPurchase(purchase) * AffilateMarketing.REWARD_AFFILATE_MARKETING);
 		
@@ -95,9 +97,9 @@ public class DefaultPurchaseService implements PurchaseService {
 		if(newStatus.statusName.equalsIgnoreCase(SetupDataLoader.COMPLETED) && inviteUser != null) {
 		    BigDecimal currentInviteUserMoney = inviteUser.getMoney();
 	        inviteUser.setMoney(currentInviteUserMoney.add(moneyReward));
-			userDto.setReffererUser(inviteUser);
+//			userDto.setReffererUser(inviteUser.getId());
 			userDao.updateUser(inviteUser);
-			userDao.updateUser(userDto);
+//			userDao.updateUser(userDto);
 			purchase.setUser(userDto);
 		}
 		

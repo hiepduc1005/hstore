@@ -50,7 +50,7 @@ public class AuthController {
 	
 	@PostMapping("/register")
 	public ApiResponse<ResponseEntity<String>> register(@RequestBody RegistrationRequest registrationRequest ,
-			@RequestParam(value = "id", required = false, defaultValue = "") String partnerCode){
+			@RequestParam(value = "partnerCode", required = false, defaultValue = "") String partnerCode){
 		
 		if(userDao.getUserByEmail(registrationRequest.getEmail()) != null ) {
 			throw new EmailAlreadyExitsException("email already exist !");

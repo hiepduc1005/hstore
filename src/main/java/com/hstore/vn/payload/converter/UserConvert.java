@@ -25,6 +25,11 @@ public class UserConvert {
 			return null;
 		}
 		
+		Integer userReffereId = null;
+		if(user.getReffererUser() == null){
+			userReffereId = null;
+		}
+		
 		UserResponse userResponse = new UserResponse(
 				user.getId(),
 				user.getFirstName(),
@@ -36,7 +41,7 @@ public class UserConvert {
 				user.getMoney(),
 				user.getCreditNum(),
 				user.getPartnerCode(),
-				user.getReffererUser().getId(),
+				userReffereId,
 			    false,
 			    true);
 		

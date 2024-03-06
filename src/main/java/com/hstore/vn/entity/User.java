@@ -75,8 +75,8 @@ public class User implements UserDetails {
 	@Column(name = "partner_code")
 	public String partnerCode;
 	
-	@Column(name = "refferer_user")
-	public User reffererUser;
+	@Column(name = "refferer_user_id")
+	public Integer reffererUser;
 	
 	 private Boolean locked = false;
 	 
@@ -157,10 +157,10 @@ public class User implements UserDetails {
 	public void setPartnerCode(String partnerCode) {
 		this.partnerCode = partnerCode;
 	}
-	public User getReffererUser() {
+	public Integer getReffererUser() {
 		return reffererUser;
 	}
-	public void setReffererUser(User reffererUser) {
+	public void setReffererUser(Integer reffererUser) {
 		this.reffererUser = reffererUser;
 	}
 	

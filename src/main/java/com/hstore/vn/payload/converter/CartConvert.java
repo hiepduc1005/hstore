@@ -15,6 +15,11 @@ public class CartConvert {
 	public ProductConvert productConvert;
 	
 	public CartResponse cartConvertToCartResponse(Cart cart) {
+		
+		if(cart == null) {
+			return null;
+		}
+		
 		CartResponse cartResponse = new CartResponse(
 				cart.getId(),
 				productConvert.productsConverToProductsResponse(cart.getProducts())

@@ -20,6 +20,7 @@ import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.payload.converter.RoleConvert;
 import com.hstore.vn.payload.converter.UserConvert;
+import com.hstore.vn.payload.request.UserEmailRequest;
 import com.hstore.vn.payload.request.UserIdRequest;
 import com.hstore.vn.payload.request.UserRequest;
 import com.hstore.vn.payload.request.UserRequestUpdate;
@@ -70,8 +71,10 @@ public class UserController {
 	}
 	
 	@GetMapping
-	public ApiResponse<ResponseEntity<UserResponse>> getUserByEmail(@RequestBody String email){
+	public ApiResponse<ResponseEntity<UserResponse>> getUserByEmail(@RequestBody UserEmailRequest userEmailRequest){
+		String email = userEmailRequest.getEmail();
 		UserResponse userResponse = userConvert.userConvertToUserResponse(userDao.getUserByEmail(email));
+		
 		
 		return new ApiResponse<ResponseEntity<UserResponse>>("Get user with email " + email + " success!",
 				new ResponseEntity<UserResponse>(userResponse,HttpStatus.OK),0);

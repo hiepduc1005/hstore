@@ -29,8 +29,8 @@ public class Privilege implements Serializable{
 	public String name;
 	
 ////	
-//	@ManyToMany(mappedBy = "privileges")
-//	public List<Role> roles;
+	@ManyToMany(mappedBy = "privileges")
+	public List<Role> roles;
 	
 	public Integer getId() {
 		return id;
