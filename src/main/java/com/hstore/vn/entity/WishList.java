@@ -1,14 +1,16 @@
 package com.hstore.vn.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity(name = "wish_list")
@@ -16,21 +18,52 @@ import jakarta.persistence.Table;
 public class WishList {
 	
 	@Id
-	@Column(name = "user_id")
-	public Integer userId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public Integer id;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "wishlists_products",
-	           joinColumns = @JoinColumn(name = "user_wishlist_id"),
-	           inverseJoinColumns = @JoinColumn(name = "product_id"))
-	public List<Product> products;
+	
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	public User user;
+	
+	@OneToMany(mappedBy = "wishList" ,cascade = CascadeType.ALL)
+	public List<WishListsProducts> products = new ArrayList<WishListsProducts>();
 
-	public List<Product> getProducts() {
-		return products;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setProducts(List<Product> products) {
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public void addProduct(Product product) {
+		WishListsProducts wishListsProducts = new WishListsProducts(this, product);
+		products.add(wishListsProducts);
+		product.getWishListsProducts().add(wishListsProducts);
+	}
+	
+	public void removeProduct(Product product) {
+		WishListsProducts wishListsProducts = new WishListsProducts(this, product);
+		product.getWishListsProducts().remove(wishListsProducts);
+		products.remove(wishListsProducts);
+		wishListsProducts.setProduct(null);
+		wishListsProducts.setWishList(null);
+	}
+	
+
+	public void setProducts(List<WishListsProducts> products) {
 		this.products = products;
 	}
+
+
 	
 }

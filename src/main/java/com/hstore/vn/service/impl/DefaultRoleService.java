@@ -1,9 +1,12 @@
 package com.hstore.vn.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.RoleDao;
+import com.hstore.vn.entity.Privilege;
 import com.hstore.vn.entity.Role;
 import com.hstore.vn.service.RoleService;
 
@@ -26,6 +29,12 @@ public class DefaultRoleService implements RoleService{
 	public Role getRoleById(Integer id) {
 		// TODO Auto-generated method stub
 		return roleDao.getRoleById(id);
+	}
+
+	@Override
+	public List<Privilege> getPrivilegesByRole(Role role) {
+		// TODO Auto-generated method stub
+		return roleDao.getPrivilegeByRole(role);
 	}
 
 }

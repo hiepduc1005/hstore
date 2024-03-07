@@ -2,14 +2,16 @@ package com.hstore.vn.entity;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = "privilege")
@@ -28,12 +30,17 @@ public class Privilege implements Serializable{
 	@Column(name = "privilege_name")
 	public String name;
 	
-////	
-	@ManyToMany(mappedBy = "privileges")
-	public List<Role> roles;
+	@OneToMany(mappedBy = "privilege" , cascade =  CascadeType.ALL , orphanRemoval =  true )
+	public List<RolesPrivileges> roles = new ArrayList<RolesPrivileges>();
 	
 	public Integer getId() {
 		return id;
+	}
+	public List<RolesPrivileges> getRolesPrivileges() {
+		return roles;
+	}
+	public void setRolesPrivileges(List<RolesPrivileges> rolesPrivileges) {
+		this.roles = rolesPrivileges;
 	}
 	public void setId(Integer id) {
 		this.id = id;

@@ -2,16 +2,18 @@ package com.hstore.vn.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = "product")
@@ -47,20 +49,50 @@ public class Product implements Serializable{
 	@Column(name = "guid" , updatable = false , nullable = false)
 	public String guid;
 	
-	@ManyToMany(mappedBy = "products")
-	public List<Purchase> purchases;
+	
+	@OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , orphanRemoval =  true)
+	public List<CartsProducts> cartsProducts = new ArrayList<CartsProducts>();
+	
+	@OneToMany(mappedBy = "product" ,cascade = CascadeType.ALL , orphanRemoval =  true)
+	public List<WishListsProducts> wishListsProducts = new ArrayList<WishListsProducts>();
+	
+	@OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , orphanRemoval =  true)
+	public List<PurchasesProducts> purchasesProduct = new ArrayList<PurchasesProducts>();
 	
 	public Integer getId() {
 		return id;
 	}
 	
-	public List<Purchase> getPurchases() {
-		return purchases;
+
+	public List<CartsProducts> getCartsProducts() {
+		return cartsProducts;
 	}
 
-	public void setPurchases(List<Purchase> purchases) {
-		this.purchases = purchases;
+	public void setCartsProducts(List<CartsProducts> cartsProducts) {
+		this.cartsProducts = cartsProducts;
 	}
+
+
+
+	public List<WishListsProducts> getWishListsProducts() {
+		return wishListsProducts;
+	}
+
+
+	public void setWishListsProducts(List<WishListsProducts> wishListsProducts) {
+		this.wishListsProducts = wishListsProducts;
+	}
+
+
+	public List<PurchasesProducts> getPurchasesProduct() {
+		return purchasesProduct;
+	}
+
+
+	public void setPurchasesProduct(List<PurchasesProducts> purchasesProduct) {
+		this.purchasesProduct = purchasesProduct;
+	}
+
 
 	public void setId(Integer id) {
 		this.id = id;

@@ -1,7 +1,6 @@
 package com.hstore.vn.dao.impl;
 
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -54,15 +53,15 @@ public class JpaCartDao implements CartDao{
 			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
 		}
 		
-		List<Product> productDtos = cartDto.getProducts();
+//		List<Product> productDtos = cartDto.add
 		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);
 		}	
-		productDtos.add(productDto);
+//		productDtos.add(productDto);
 		
-		cartDto.setProducts(productDtos);
-		
+//		cartDto.setProducts(productDtos);
+		cartDto.addProduct(productDto);
 		updateCart(cartDto);
 	}
 
@@ -81,18 +80,19 @@ public class JpaCartDao implements CartDao{
 			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
 		}
 		
-		List<Product> productDtos = cartDto.getProducts();
-		if(productDtos == null) {
-			throw new NotFoundProductException("Not found any product in cart");
-		}
+//		List<Product> productDtos = cartDto.getProducts();
+//		if(productDtos == null) {
+//			throw new NotFoundProductException("Not found any product in cart");
+//		}
 		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);
 		}
-		productDtos.remove(productDto);
+//		productDtos.remove(productDto);
 		
-		cartDto.setProducts(productDtos);
+//		cartDto.setProducts(productDtos);
 		
+		cartDto.removeProduct(productDto);
 		updateCart(cartDto);
 	}
 

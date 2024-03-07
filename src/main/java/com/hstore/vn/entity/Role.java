@@ -1,18 +1,16 @@
 package com.hstore.vn.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = "role")
@@ -31,14 +29,15 @@ public class Role implements Serializable{
 	@Column(name = "role_name")
 	public String name;
 	
-	@ManyToMany(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
-	@JoinTable(name = "roles_privileges",
-	           joinColumns = @JoinColumn(name = "role_id"),
-	           inverseJoinColumns = @JoinColumn(name = "privilege_id"))
-	public List<Privilege> privileges;
+	@OneToMany(
+			mappedBy = "role" ,
+			cascade =  CascadeType.ALL ,
+			orphanRemoval = true 
+			)
+	public List<RolesPrivileges> privileges = new ArrayList<RolesPrivileges>();
 	
-	@ManyToMany(mappedBy = "rolesDto")
-	public List<User> users;
+	@OneToMany(mappedBy = "role" , cascade = CascadeType.ALL , orphanRemoval = true)
+	public List<UsersRoles> users = new ArrayList<UsersRoles>();
 	
 	
 	public Integer getId() {
@@ -53,11 +52,25 @@ public class Role implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<Privilege> getPrivileges() {
-		return privileges;
+	public void addPrivilege( Privilege privilege) {
+		RolesPrivileges rolesPrivileges = new RolesPrivileges(this , privilege);
+		privileges.add(rolesPrivileges);
+		privilege.getRolesPrivileges().add(rolesPrivileges);
 	}
-	public void setPrivileges(List<Privilege> privileges) {
-		this.privileges = privileges;
+	public void removePrivilege(Privilege privilege) {
+		RolesPrivileges rolesPrivileges = new RolesPrivileges(this , privilege);
+		privilege.getRolesPrivileges().remove(rolesPrivileges);
+		privileges.remove(rolesPrivileges);
+		rolesPrivileges.setPrivilege(null);
+		rolesPrivileges.setRole(null);
+	}
+	
+	public List<UsersRoles> getRoles() {
+		return users;
+	}
+	
+	public void setRoles(List<UsersRoles> roles) {
+		this.users = roles;
 	}
 	
 	

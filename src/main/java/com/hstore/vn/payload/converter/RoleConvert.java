@@ -22,7 +22,6 @@ public class RoleConvert {
 	public PrivilegeConvert privilegeConvert;
 	
 	
-	
 	public Role roleRequestConvertToRoleDto(RoleRequest roleRequest) {
 		Role roleDto =roleDao.getRoleByName(roleRequest.getName());
 		
@@ -44,7 +43,7 @@ public class RoleConvert {
 		RoleResponse roleResponse = new RoleResponse(
 				role.getId(),
 				role.getName(),
-				privilegeConvert.privilegesConvertToPrivilegesResponse(role.getPrivileges())
+				privilegeConvert.privilegesConvertToPrivilegesResponse(roleDao.getPrivilegeByRole(role))
 				);
 		return roleResponse;
 	}

@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
+import com.hstore.vn.SetupDataLoader;
+import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Role;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.user.UserNotFoundException;
 
@@ -21,7 +24,8 @@ public class JpaUserDao implements UserDao {
 	@Autowired
 	public EntityManager em;
 	
-	
+	@Autowired
+	public RoleDao roleDao;
 
 	@Transactional
 	@Override
@@ -35,7 +39,10 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public User saveUser(User user) {
-		return em.merge(user);
+		User userRes = em.merge(user);
+		user.addRole(roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER));
+		em.flush();
+		return userRes;
 	}
 
 	@Transactional
@@ -59,10 +66,6 @@ public class JpaUserDao implements UserDao {
 		query.setParameter("email",email); 
 	    User user = (User) query.getResultList().stream().findFirst().orElse(null);
 	   
-	    if(user != null) {
-	    	user.enabled = true;
-	    }
-	    
 		return user;
 	}
 	
@@ -102,13 +105,15 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
+		User user = getUserById(id);
 		if(id == null ) {
 			throw new IllegalArgumentException("User Id must not be null");
 		}
 		
-		if(getUserById(id) == null) {
+		if(user == null) {
 			throw new UserNotFoundException("Can not found user with id : " + id);
 		}
+		em.remove(user);
 		
 //		Query cartId = em.createNativeQuery("SELECT cart_id FROM user u WHERE u.id = :id", Integer.class);
 //		cartId.setParameter("id",id);	
@@ -118,20 +123,20 @@ public class JpaUserDao implements UserDao {
 //		queryDeleteFKUserInPurchase.setParameter("id", id);
 //		queryDeleteFKUserInPurchase.executeUpdate();
 //		
-		Query queryDeleteFKRole = em.createNativeQuery("DELETE FROM users_roles WHERE user_id = :id");
-		queryDeleteFKRole.setParameter("id", id);
-		queryDeleteFKRole.executeUpdate();
+//		Query queryDeleteFKRole = em.createNativeQuery("DELETE FROM users_roles WHERE user_id = :id");
+//		queryDeleteFKRole.setParameter("id", id);
+//		queryDeleteFKRole.executeUpdate();
 //		
 				
-		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , User.class);
-		
-		query.setParameter("id", id);
-		
-		int rowsAffected = query.executeUpdate();      
-		if (rowsAffected == 0) {
-        	throw new UserNotFoundException("User with id " + id + " not found.");
-        }
-		
+//		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , User.class);
+//		
+//		query.setParameter("id", id);
+//		
+//		int rowsAffected = query.executeUpdate();      
+//		if (rowsAffected == 0) {
+//        	throw new UserNotFoundException("User with id " + id + " not found.");
+//        }
+//		
 		
                   
 //        Query queryDeleteFKCart = 
@@ -139,6 +144,23 @@ public class JpaUserDao implements UserDao {
 //		queryDeleteFKCart.setParameter("cartId", cartIdWithUser);
 //		queryDeleteFKCart.executeUpdate();
 //		
+	}
+
+	@Transactional
+	@Override
+	public List<Role> getRoleByUser(User user) {
+		if(user == null) {
+			throw new UserNotFoundException("Can not found user!");
+		}
+		
+		TypedQuery<Role> typedQuery = em.createQuery(
+				"SELECT ur.role FROM usersRoles ur WHERE ur.user = :user" , Role.class);
+		
+		typedQuery.setParameter("user", user);
+		
+		List<Role> roles = typedQuery.getResultList();
+		
+		return roles;
 	}
 	
 	

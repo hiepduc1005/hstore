@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.entity.User;
 import com.hstore.vn.payload.response.UserResponse;
+import com.hstore.vn.service.UserService;
 
 
 @Service
@@ -18,6 +19,9 @@ public class UserConvert {
 	
 	@Autowired
 	public CartConvert cartConvert;
+	
+	@Autowired
+	public UserService userService;
 	
 	
 	public UserResponse userConvertToUserResponse(User user) {
@@ -36,7 +40,7 @@ public class UserConvert {
 				user.getLastName(),
 				user.getEmail(),
 				user.getPhoneNum(),
-				roleConvert.rolesConvertToRolesResponse(user.getRoles()),
+				roleConvert.rolesConvertToRolesResponse(userService.getRoleByUser(user)),
 				cartConvert.cartConvertToCartResponse(user.getCart()),
 				user.getMoney(),
 				user.getCreditNum(),

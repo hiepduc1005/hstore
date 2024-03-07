@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.hstore.vn.entity.Cart;
 import com.hstore.vn.payload.response.CartResponse;
+import com.hstore.vn.service.CartService;
 
 
 @Service
@@ -13,6 +14,9 @@ public class CartConvert {
 	
 	@Autowired
 	public ProductConvert productConvert;
+	
+	@Autowired
+	public CartService cartService;
 	
 	public CartResponse cartConvertToCartResponse(Cart cart) {
 		
@@ -22,7 +26,7 @@ public class CartConvert {
 		
 		CartResponse cartResponse = new CartResponse(
 				cart.getId(),
-				productConvert.productsConverToProductsResponse(cart.getProducts())
+				productConvert.productsConverToProductsResponse(cartService.getProductsInCart(cart.getId()))
 				);
 		return cartResponse;
 	}

@@ -1,20 +1,21 @@
 package com.hstore.vn.service.impl;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Cart;
+import com.hstore.vn.entity.Role;
 import com.hstore.vn.entity.User;
+import com.hstore.vn.entity.UsersRoles;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
@@ -49,8 +50,6 @@ public class DefaultUserService implements UserService{
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
 		
-		user.setRoles(Arrays.asList(
-				roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER)));
 		if(!refferedUserPartnerCode.isEmpty()) {
 			  user.setReffererUser(
         		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
@@ -58,19 +57,21 @@ public class DefaultUserService implements UserService{
 		else {
 			 user.setReffererUser(null);
 		}
-		Cart cartDto = new Cart();
-		cartDto = cartDao.createCart(cartDto);
-		user.setCart(cartDto);
-        user.setPartnerCode(partnerCode.genneratePartnerCode());
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
         user.setMoney(BigDecimal.ZERO);
-        
         
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+		
+		Cart cartDto = new Cart();
+		cartDto = cartDao.createCart(cartDto);
+		user.setCart(cartDto);
+		
+        User userSaved = userDao.saveUser(user);
         
-        User user2 = userDao.saveUser(user);
-        cartDto.setUser(user2);
+        cartDto.setUser(userSaved);
 		cartDao.updateCart(cartDto);
+		
 	}
 	
 	@Override
@@ -88,17 +89,21 @@ public class DefaultUserService implements UserService{
 			 user.setReffererUser(null);
 		}
 		
-	  Cart cartDto = new Cart();
-	  cartDto = cartDao.createCart(cartDto);
-	  user.setCart(cartDto);
-      user.setPartnerCode(partnerCode.genneratePartnerCode());
-      user.setMoney(BigDecimal.ZERO);
-      
-      
-      String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-      user.setPassword(encodedPassword);
-      
-      userDao.saveUser(user);
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
+        user.setMoney(BigDecimal.ZERO);
+        
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+		
+		Cart cartDto = new Cart();
+		cartDto = cartDao.createCart(cartDto);
+		user.setCart(cartDto);
+		
+        User userSaved = userDao.saveUser(user);
+        
+        cartDto.setUser(userSaved);
+		cartDao.updateCart(cartDto);
+		
 		
 	}
 
@@ -144,6 +149,15 @@ public class DefaultUserService implements UserService{
 		
 		purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);
+	}
+
+	@Override
+	public List<Role> getRoleByUser(User user) {
+		List<Role> roles = new ArrayList<Role>();
+		for(UsersRoles usersRoles : user.getRoles()) {
+			roles.add(usersRoles.getRole());
+		}
+		return roles;
 	}
 
 	
