@@ -20,86 +20,77 @@ import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
 
 @Service
-public class DefaultUserService implements UserService{
-	
+public class DefaultUserService implements UserService {
+
 	@Autowired
 	public UserDao userDao;
-	
+
 	@Autowired
 	public RoleDao roleDao;
-	
+
 	@Autowired
 	public GenneratePartnerCode partnerCode;
 
 	@Autowired
 	public BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	@Autowired
 	public CartDao cartDao;
-	
-	
+
 	@Autowired
 	public PurchaseDao purchaseDao;
-	
+
 	@Override
-	public void registerUser(User user ,String refferedUserPartnerCode) {
-		//handle exception
+	public void registerUser(User user, String refferedUserPartnerCode) {
+		// handle exception
 		String userEmailSignup = user.getEmail();
-		if(userDao.getUserByEmail(userEmailSignup) != null) {
+		if (userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
-		
+
 		user.setRoles(Arrays.asList(
 				roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER)));
-		if(!refferedUserPartnerCode.isEmpty()) {
-			  user.setReffererUser(
-        		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+		if (!refferedUserPartnerCode.isEmpty()) {
+			user.setReffererUser(
+					userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+		} else {
+			user.setReffererUser(null);
 		}
-		else {
-			 user.setReffererUser(null);
-		}
-		Cart cartDto = new Cart();
-		cartDto = cartDao.createCart(cartDto);
-		user.setCart(cartDto);
-        user.setPartnerCode(partnerCode.genneratePartnerCode());
-        user.setMoney(BigDecimal.ZERO);
-        
-        
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        
-        User user2 = userDao.saveUser(user);
-        cartDto.setUser(user2);
-		cartDao.updateCart(cartDto);
+		user.setCart(new Cart());
+		user.getCart().setUser(user);
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
+		user.setMoney(BigDecimal.ZERO);
+
+		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+
+		userDao.saveUser(user);
 	}
-	
+
 	@Override
 	public void createUser(User user, String refferedUserPartnerCode) {
 		String userEmailSignup = user.getEmail();
-		if(userDao.getUserByEmail(userEmailSignup) != null) {
+		if (userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
-		
-		if(!refferedUserPartnerCode.isEmpty()) {
-			  user.setReffererUser(
-      		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+
+		if (!refferedUserPartnerCode.isEmpty()) {
+			user.setReffererUser(
+					userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+		} else {
+			user.setReffererUser(null);
 		}
-		else {
-			 user.setReffererUser(null);
-		}
-		
-	  Cart cartDto = new Cart();
-	  cartDto = cartDao.createCart(cartDto);
-	  user.setCart(cartDto);
-      user.setPartnerCode(partnerCode.genneratePartnerCode());
-      user.setMoney(BigDecimal.ZERO);
-      
-      
-      String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-      user.setPassword(encodedPassword);
-      
-      userDao.saveUser(user);
-		
+
+		user.setCart(new Cart());
+		user.getCart().setUser(user);
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
+		user.setMoney(BigDecimal.ZERO);
+
+		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+
+		userDao.saveUser(user);
+
 	}
 
 	@Override
@@ -136,18 +127,8 @@ public class DefaultUserService implements UserService{
 
 	@Override
 	public void deleteUser(Integer id) {
-		User user = getUserById(id);
-		User inviteUser = getUserByPartnerCode(user.getPartnerCode());
-		if(inviteUser != null) {
-			userDao.deleteUser(inviteUser.getId());
-		}
-		
-		purchaseDao.deletePurchaseByUserId(id);
+		// purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);
 	}
-
-	
-	
-	
 
 }

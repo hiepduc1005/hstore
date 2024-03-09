@@ -17,18 +17,16 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public class JpaUserDao implements UserDao {
-	
+
 	@Autowired
 	public EntityManager em;
-	
-	
 
 	@Transactional
 	@Override
 	public User getUserById(Integer id) {
-		
-	User userDto = em.find(User.class, id);
-		
+
+		User userDto = em.find(User.class, id);
+
 		return userDto;
 	}
 
@@ -51,40 +49,41 @@ public class JpaUserDao implements UserDao {
 	@Override
 	public User getUserByEmail(String email) {
 		System.out.println(email);
-		
-		Query query = em.createNativeQuery("SELECT * FROM user WHERE email = :email" , User.class);
-		
-//	    TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.email = :email",User.class);
-		
-		query.setParameter("email",email); 
-	    User user = (User) query.getResultList().stream().findFirst().orElse(null);
-	   
-	    if(user != null) {
-	    	user.enabled = true;
-	    }
-	    
+
+		Query query = em.createNativeQuery("SELECT * FROM user WHERE email = :email", User.class);
+
+		// TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE
+		// u.email = :email",User.class);
+
+		query.setParameter("email", email);
+		User user = (User) query.getResultList().stream().findFirst().orElse(null);
+
+		if (user != null) {
+			user.enabled = true;
+		}
+
 		return user;
 	}
-	
 
 	@Transactional
 	@Override
 	public List<User> getAllUsers() {
-		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u",User.class);
+		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u", User.class);
 		List<User> userDtos = typedQuery.getResultList();
-		
-		if(userDtos == null) {
-	    	throw new UserNotFoundException("Can not found any user");
-	    }
-		
+
+		if (userDtos == null) {
+			throw new UserNotFoundException("Can not found any user");
+		}
+
 		return userDtos;
 	}
 
 	@Transactional
 	@Override
 	public User getUserByPartnerCode(String partnerCode) {
-		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.partnerCode = :partnerCode",User.class);
-		typedQuery.setParameter("partnerCode",partnerCode);
+		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.partnerCode = :partnerCode",
+				User.class);
+		typedQuery.setParameter("partnerCode", partnerCode);
 		User userDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 		return userDto;
 	}
@@ -92,55 +91,59 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public List<User> getRefferedByUserId(Integer id) {
-		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.reffererUser.id = :id",User.class);
+		TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE u.reffererUser.id = :id", User.class);
 		typedQuery.setParameter("id", id);
 		List<User> userDtos = typedQuery.getResultList();
 		return userDtos;
 	}
 
-	
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
-		if(id == null ) {
+		if (id == null) {
 			throw new IllegalArgumentException("User Id must not be null");
 		}
-		
-		if(getUserById(id) == null) {
+
+		User user = getUserById(id);
+
+		if (user == null) {
 			throw new UserNotFoundException("Can not found user with id : " + id);
 		}
-		
-//		Query cartId = em.createNativeQuery("SELECT cart_id FROM user u WHERE u.id = :id", Integer.class);
-//		cartId.setParameter("id",id);	
-//		Integer cartIdWithUser = (Integer) cartId.getResultList().stream().findFirst().orElse(null);
-//		
-//		Query queryDeleteFKUserInPurchase = em.createNativeQuery("DELETE FROM purchase p WHERE p.fk_user_id = :id");
-//		queryDeleteFKUserInPurchase.setParameter("id", id);
-//		queryDeleteFKUserInPurchase.executeUpdate();
-//		
+
+		// Query cartId = em.createNativeQuery("SELECT cart_id FROM user u WHERE u.id =
+		// :id", Integer.class);
+		// cartId.setParameter("id",id);
+		// Integer cartIdWithUser = (Integer)
+		// cartId.getResultList().stream().findFirst().orElse(null);
+		//
+		// Query queryDeleteFKUserInPurchase = em.createNativeQuery("DELETE FROM
+		// purchase p WHERE p.fk_user_id = :id");
+		// queryDeleteFKUserInPurchase.setParameter("id", id);
+		// queryDeleteFKUserInPurchase.executeUpdate();
+		//
 		Query queryDeleteFKRole = em.createNativeQuery("DELETE FROM users_roles WHERE user_id = :id");
 		queryDeleteFKRole.setParameter("id", id);
 		queryDeleteFKRole.executeUpdate();
-//		
-				
-		Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" , User.class);
-		
-		query.setParameter("id", id);
-		
-		int rowsAffected = query.executeUpdate();      
-		if (rowsAffected == 0) {
-        	throw new UserNotFoundException("User with id " + id + " not found.");
-        }
-		
-		
-                  
-//        Query queryDeleteFKCart = 
-//				em.createNativeQuery("DELETE FROM cart c WHERE c.id = :cartId");
-//		queryDeleteFKCart.setParameter("cartId", cartIdWithUser);
-//		queryDeleteFKCart.executeUpdate();
-//		
+		//
+
+		// Query query = em.createNativeQuery("DELETE FROM user u WHERE u.id = :id" ,
+		// User.class);
+		//
+		// query.setParameter("id", id);
+		//
+		// int rowsAffected = query.executeUpdate();
+		// if (rowsAffected == 0) {
+		// throw new UserNotFoundException("User with id " + id + " not found.");
+		// }
+		//
+		//
+
+		// Query queryDeleteFKCart =
+		// em.createNativeQuery("DELETE FROM cart c WHERE c.id = :cartId");
+		// queryDeleteFKCart.setParameter("cartId", cartIdWithUser);
+		// queryDeleteFKCart.executeUpdate();
+		//
+		em.remove(user);
 	}
-	
-	
 
 }
