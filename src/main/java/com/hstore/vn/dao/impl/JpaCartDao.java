@@ -3,6 +3,7 @@ package com.hstore.vn.dao.impl;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,14 +56,16 @@ public class JpaCartDao implements CartDao{
 		}
 		
 		List<Product> productDtos = cartDto.getProducts();
+
 		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);
 		}	
-		productDtos.add(productDto);
 		
+		productDtos.add(productDto);
 		cartDto.setProducts(productDtos);
 		
+
 		updateCart(cartDto);
 	}
 
@@ -85,6 +88,7 @@ public class JpaCartDao implements CartDao{
 		if(productDtos == null) {
 			throw new NotFoundProductException("Not found any product in cart");
 		}
+
 		Product productDto = productDao.getProductById(productId);
 		if(productDto == null) {
 			throw new NotFoundProductException("Can not found product with id : " + productId);

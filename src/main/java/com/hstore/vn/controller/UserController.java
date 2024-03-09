@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.dao.UserDao;
+
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.payload.converter.RoleConvert;
@@ -55,6 +56,7 @@ public class UserController {
 		userDto.setFirstName(userRequest.getFirstName());
 		userDto.setLastName(userRequest.getLastName());
 		userDto.setPassword(userRequest.getPassword());
+
 		userDto.setRoles(roleConvert.rolesRequestConvertToRolesDto(userRequest.getRoles()));
 		
 		userService.createUser(userDto,"");
@@ -89,7 +91,9 @@ public class UserController {
 		userDto.setEmail(userRequestUpdate.getEmail());
 		userDto.setFirstName(userRequestUpdate.getFirstName());
 		userDto.setLastName(userRequestUpdate.getLastName());
+
 		userDto.setRoles(roleConvert.rolesRequestConvertToRolesDto(userRequestUpdate.getRoles()));
+
 		userDto.setPhoneNum(userRequestUpdate.getPhoneNum());
 		userDto.setCreditNum(userRequestUpdate.getCardNum());
 		

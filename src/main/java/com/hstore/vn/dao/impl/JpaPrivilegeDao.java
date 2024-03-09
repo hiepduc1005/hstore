@@ -36,6 +36,7 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 		if(privilegeDto == null) {
 			throw new PrivilegeNotFoundException("Can not found privilege with name : " + name);
 		}
+
 		
 		return privilegeDto;
 	}

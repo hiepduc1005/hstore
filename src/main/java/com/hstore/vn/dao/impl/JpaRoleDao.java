@@ -1,11 +1,14 @@
 package com.hstore.vn.dao.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hstore.vn.dao.RoleDao;
+
 import com.hstore.vn.entity.Role;
 import com.hstore.vn.exception.privilege.PrivilegeNotFoundException;
+
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -49,6 +52,6 @@ public class JpaRoleDao implements RoleDao{
 		return roleDto;
 	}
 
-	
+
 
 }

@@ -2,6 +2,7 @@ package com.hstore.vn.service;
 
 import java.util.List;
 
+
 import com.hstore.vn.entity.User;
 
 
@@ -24,5 +25,6 @@ public interface UserService {
 	List<User> getAllUser();
 	
 	void deleteUser(Integer id);
+
 
 }

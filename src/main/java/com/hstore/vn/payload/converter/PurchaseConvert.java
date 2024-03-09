@@ -14,7 +14,6 @@ import com.hstore.vn.payload.request.PurchaseRequestUpdate;
 import com.hstore.vn.payload.response.PurchaseResponse;
 
 
-
 @Service
 public class PurchaseConvert {
 	
@@ -25,7 +24,6 @@ public class PurchaseConvert {
 	public ProductConvert productConvert;
 	
 	
-	
 	@Autowired
 	public ProductDao productDao;
 	
@@ -33,6 +31,7 @@ public class PurchaseConvert {
 	public PurchaseResponse purchaseConvertToPurchaseResponse(Purchase purchase) {
 		PurchaseResponse purchaseResponse = new PurchaseResponse(
 				purchase.getId(),
+
 			    productConvert.productsConverToProductsResponse(purchase.getProducts()),
 			    purchaseStatusConvert.purchaseStatusConvertToPurchaseStatusResponse(purchase.getPurchaseStatus()),
 			    purchase.getAddress(),

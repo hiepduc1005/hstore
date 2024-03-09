@@ -3,6 +3,7 @@ package com.hstore.vn.service.impl;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
 import com.hstore.vn.entity.PurchaseStatus;
+
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.purchase.CreatePurchaseFailure;
 import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
@@ -30,6 +32,7 @@ import com.hstore.vn.service.UserService;
 public class DefaultPurchaseService implements PurchaseService {
 	@Autowired
 	public PurchaseDao purchaseDao;
+
 	
 	@Autowired
 	public UserDao userDao;
@@ -38,6 +41,7 @@ public class DefaultPurchaseService implements PurchaseService {
 	@Autowired
 	public PurchaseStatusDao purchaseStatusDao;
 	
+
 	@Autowired
 	public UserService userService;
 
@@ -52,6 +56,7 @@ public class DefaultPurchaseService implements PurchaseService {
 	public Purchase savePurchase(Purchase purchase) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.getUserByEmail(authentication.getName());
+
 		if(purchase.getProducts().isEmpty()) {
 			throw new CreatePurchaseFailure("Can not save purchase! You need to add atleast one product");
 		}
@@ -60,7 +65,7 @@ public class DefaultPurchaseService implements PurchaseService {
 		purchase.setUser(user);
 		purchase.setPurchaseStatus(purchaseStatus);
 		purchaseDao.savePurchase(purchase);
-		
+
 		return purchase;
 	}
 	
@@ -71,6 +76,7 @@ public class DefaultPurchaseService implements PurchaseService {
 
 	@Override
 	public Purchase updateStatusPurchaseByPurchaseIdUpToOneStage(Integer purchaseId) {
+
 		
 		if(purchaseId == null || purchaseId < 1) {
 			throw new IllegalArgumentException("Purchase id must be type int");
@@ -112,6 +118,7 @@ public class DefaultPurchaseService implements PurchaseService {
 		
 		updatePurchase(purchase);
 		
+
 		return purchase;
 	}
 
@@ -135,6 +142,7 @@ public class DefaultPurchaseService implements PurchaseService {
 //		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //		UserDto userDto = userDao.getUserByEmail(authentication.getName());
 //		PurchaseDto purchaseDto = purchaseDao.getPurchasesByUserId(userDto.getId());
+
 		return null;
 	}
 
@@ -162,6 +170,7 @@ public class DefaultPurchaseService implements PurchaseService {
 		List<Purchase> purchases =
 						purchaseDao.getPurchasesByUserId(userId);
 		
+
 		return purchases;
 	}
 

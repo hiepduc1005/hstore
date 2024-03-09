@@ -2,6 +2,7 @@ package com.hstore.vn.dao;
 
 import java.util.List;
 
+
 import com.hstore.vn.entity.User;
 
 
@@ -22,4 +23,5 @@ public interface UserDao {
 	List<User> getRefferedByUserId(Integer id);
 	
 	void deleteUser(Integer id);
+
 }

@@ -38,9 +38,11 @@ public class JpaPurchaseStatusDao implements PurchaseStatusDao{
 		
 		typedQuery.setParameter("statusName", statusName);
 		PurchaseStatus purchaseStatusDto = typedQuery.getResultList().stream().findFirst().orElse(null);
+		
 		if(purchaseStatusDto == null) {
 			throw new PurchaseStatusNotFoundException("Can not found status with name : " + statusName);
 		}
+		
 		return purchaseStatusDto;
 	}
 

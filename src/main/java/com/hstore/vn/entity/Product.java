@@ -2,7 +2,9 @@ package com.hstore.vn.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+
 import java.util.List;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 
 @Entity(name = "product")
@@ -47,13 +51,16 @@ public class Product implements Serializable{
 	@Column(name = "guid" , updatable = false , nullable = false)
 	public String guid;
 	
+
 	@ManyToMany(mappedBy = "products")
 	public List<Purchase> purchases;
+
 	
 	public Integer getId() {
 		return id;
 	}
 	
+
 	public List<Purchase> getPurchases() {
 		return purchases;
 	}
@@ -61,6 +68,7 @@ public class Product implements Serializable{
 	public void setPurchases(List<Purchase> purchases) {
 		this.purchases = purchases;
 	}
+
 
 	public void setId(Integer id) {
 		this.id = id;

@@ -1,9 +1,11 @@
 package com.hstore.vn.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.RoleDao;
+
 import com.hstore.vn.entity.Role;
 import com.hstore.vn.service.RoleService;
 
@@ -27,5 +29,6 @@ public class DefaultRoleService implements RoleService{
 		// TODO Auto-generated method stub
 		return roleDao.getRoleById(id);
 	}
+
 
 }

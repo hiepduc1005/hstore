@@ -10,7 +10,7 @@ import com.hstore.vn.dao.CategoryDao;
 import com.hstore.vn.dao.ProductDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.exception.product.CreateProductFailuerException;
-import com.hstore.vn.exception.product.DeleteProductFailuer;
+
 import com.hstore.vn.exception.product.NotFoundProductException;
 import com.hstore.vn.exception.product.UpdateProductFailuer;
 
@@ -233,13 +233,16 @@ public class JpaProductDao implements ProductDao{
 	@Override
 	@Modifying
 	public void deleteProduct(String uuid) {
-		Query query = em.createNativeQuery("DELETE FROM product p WHERE p.guid = :uuid");
-	    query.setParameter("uuid", uuid);
-	    		
-		 int rowsAffected = query.executeUpdate();
-	        if (rowsAffected == 0) {
-	            throw new DeleteProductFailuer("Failed to delete product with UUID: " + uuid);
-	        }
+		if(uuid == null || uuid.isEmpty()) {
+			throw new IllegalArgumentException("Product UUID must be type string");
+		}
+		
+		Product product = getProductByGuid(uuid);
+		
+		if(product == null) {
+			throw new NotFoundProductException("Can not found product with uuid : " + uuid);
+		}
+		em.remove(product);
 		
 	}
 

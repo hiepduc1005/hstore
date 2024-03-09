@@ -1,6 +1,7 @@
 package com.hstore.vn.service.impl;
 
 import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import com.hstore.vn.SetupDataLoader;
+
 import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Cart;
+
 import com.hstore.vn.entity.User;
 import com.hstore.vn.entity.WishList;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
@@ -21,6 +25,7 @@ import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
 
 @Service
+
 public class DefaultUserService implements UserService{
 	
 	@Autowired
@@ -29,11 +34,13 @@ public class DefaultUserService implements UserService{
 	@Autowired
 	public RoleDao roleDao;
 	
+
 	@Autowired
 	public GenneratePartnerCode partnerCode;
 
 	@Autowired
 	public BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	
 	@Autowired
 	public CartDao cartDao;
@@ -106,6 +113,7 @@ public class DefaultUserService implements UserService{
         
         userDao.saveUser(user);
 		
+        
 	}
 
 	@Override
@@ -146,8 +154,5 @@ public class DefaultUserService implements UserService{
 		userDao.deleteUser(id);
 	}
 
-	
-	
-	
 
 }

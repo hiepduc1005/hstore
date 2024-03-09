@@ -1,18 +1,23 @@
 package com.hstore.vn.entity;
 
+
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.FetchType;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 
 
@@ -28,11 +33,13 @@ public class Purchase {
 	@JoinColumn(name = "user_id")
 	public User user;
 	
+
 	@ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	@JoinTable(name = "purchases_products",
 	           joinColumns = @JoinColumn(name = "purchase_id"),
 	           inverseJoinColumns = @JoinColumn(name = "product_id"))
 	public List<Product> products;
+
 	
 	@ManyToOne
 	@JoinColumn(name = "purchase_status_id")
@@ -40,6 +47,7 @@ public class Purchase {
 	
 	@Column(name = "address")
 	public String address;
+
 
 	public String getAddress() {
 		return address;
@@ -53,6 +61,7 @@ public class Purchase {
 	@Column(name = "date")
 	public String localDateTime;
 	
+
 	public Integer getId() {
 		return id;
 	}
@@ -69,6 +78,7 @@ public class Purchase {
 		this.user = user;
 	}
 	
+
 	public List<Product> getProducts() {
 		return products;
 	}
@@ -76,6 +86,7 @@ public class Purchase {
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
+
 	
 	public PurchaseStatus getPurchaseStatus() {
 		return purchaseStatus;

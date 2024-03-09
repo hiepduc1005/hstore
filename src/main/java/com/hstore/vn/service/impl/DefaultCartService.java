@@ -1,6 +1,7 @@
 package com.hstore.vn.service.impl;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Cart;
+
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.service.CartService;
@@ -29,8 +31,10 @@ public class DefaultCartService implements CartService{
 	
 	@Override
 	public Integer getNumbersOfProductInCart(Integer cartId) {
+
 		Cart cartDto = cartDao.findCartById(cartId);
 		return cartDto.getProducts().size();
+
 	}
 
 	
@@ -38,7 +42,9 @@ public class DefaultCartService implements CartService{
 	@Override
 	public List<Product> getProductsInCart(Integer cartId) {
 		Cart cartDto = cartDao.findCartById(cartId);
+
 		return cartDto.getProducts();
+
 	}
 
 	@Override
@@ -83,7 +89,9 @@ public class DefaultCartService implements CartService{
 	    User user = userDao.getUserByEmail(username);
 		
 		Cart cart = getCartByUserId(user.getId());
+
 		List<Product> products = cart.getProducts();
+
 		BigDecimal totalPrice = BigDecimal.ZERO;
 		
 		if(products.isEmpty()) {
