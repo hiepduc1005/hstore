@@ -3,6 +3,7 @@ package com.hstore.vn.service.impl;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
 import com.hstore.vn.entity.PurchaseStatus;
+import com.hstore.vn.entity.PurchasesProducts;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.purchase.CreatePurchaseFailure;
 import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
@@ -113,7 +115,7 @@ public class DefaultPurchaseService implements PurchaseService {
 
 	@Override
 	public Double getTotalsMoneyByPurchase(Purchase purchase) {
-		List<Product> productDtos = purchase.getProducts();
+		List<Product> productDtos = getProductsByPurchase(purchase);
 		double res = 0;
 
 		if (productDtos != null && !productDtos.isEmpty()) {
@@ -169,5 +171,20 @@ public class DefaultPurchaseService implements PurchaseService {
 	public List<Purchase> getPurchasesByUserId(Integer userId) {
 		return purchaseDao.getPurchasesByUserId(userId);
 	}
+
+
+
+	@Override
+	public List<Product> getProductsByPurchase(Purchase purchase) {
+		List<Product> products = new ArrayList<Product>();
+		
+		for(PurchasesProducts purchasesProducts : purchase.getProducts()) {
+			products.add(purchasesProducts.getProduct());
+		}
+		
+		return products;
+	}
+
+
 
 }

@@ -1,20 +1,21 @@
 package com.hstore.vn.service.impl;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.CartDao;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Cart;
+import com.hstore.vn.entity.Role;
 import com.hstore.vn.entity.User;
+import com.hstore.vn.entity.UsersRoles;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
@@ -47,7 +48,6 @@ public class DefaultUserService implements UserService {
 		if (userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
-
 		user.setRoles(Arrays.asList(
 				roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER)));
 		if (!refferedUserPartnerCode.isEmpty()) {
@@ -65,6 +65,7 @@ public class DefaultUserService implements UserService {
 		user.setPassword(encodedPassword);
 
 		userDao.saveUser(user);
+	
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class DefaultUserService implements UserService {
 		user.setPassword(encodedPassword);
 
 		userDao.saveUser(user);
-
+	
 	}
 
 	@Override

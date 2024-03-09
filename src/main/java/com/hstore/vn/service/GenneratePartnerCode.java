@@ -30,9 +30,9 @@ public class GenneratePartnerCode {
 			sb.append(CHARACTER_AND_NUMBER[rd.nextInt(CHARACTER_AND_NUMBER.length)]);
 		}
 		String res = sb.toString();
-		if(userDao.getUserByPartnerCode(res) != null) {
-			return this.genneratePartnerCode();
-		}
+//		if(userDao.getUserByPartnerCode(res) != null) {
+//			return this.genneratePartnerCode();
+//		}
 		
 			return res;
 		

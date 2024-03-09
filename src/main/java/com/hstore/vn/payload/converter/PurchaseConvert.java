@@ -12,6 +12,7 @@ import com.hstore.vn.entity.Purchase;
 import com.hstore.vn.payload.request.PurchaseRequest;
 import com.hstore.vn.payload.request.PurchaseRequestUpdate;
 import com.hstore.vn.payload.response.PurchaseResponse;
+import com.hstore.vn.service.PurchaseService;
 
 
 
@@ -24,7 +25,8 @@ public class PurchaseConvert {
 	@Autowired
 	public ProductConvert productConvert;
 	
-	
+	@Autowired
+	public PurchaseService purchaseService;
 	
 	@Autowired
 	public ProductDao productDao;
@@ -33,7 +35,7 @@ public class PurchaseConvert {
 	public PurchaseResponse purchaseConvertToPurchaseResponse(Purchase purchase) {
 		PurchaseResponse purchaseResponse = new PurchaseResponse(
 				purchase.getId(),
-			    productConvert.productsConverToProductsResponse(purchase.getProducts()),
+			    productConvert.productsConverToProductsResponse(purchaseService.getProductsByPurchase(purchase)),
 			    purchaseStatusConvert.purchaseStatusConvertToPurchaseStatusResponse(purchase.getPurchaseStatus()),
 			    purchase.getAddress(),
 			    purchase.getLocalDateTime()

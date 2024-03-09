@@ -10,7 +10,6 @@ import com.hstore.vn.entity.Category;
 import com.hstore.vn.exception.category.NotFoundCategoryException;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
@@ -75,14 +74,27 @@ public class JpaCategoryDao implements CategoryDao{
 	@Transactional
 	@Override
 	public void deleteCategory(Integer id) {
-		Query query = entityManager.createNativeQuery("DELETE FROM category c WHERE c.id = :id");
 		
-		query.setParameter("id", id);
+		if(id == null || id < 1) {
+			throw new IllegalArgumentException("Category id must ");
+		}
 		
-		 int rowsAffected = query.executeUpdate();
-	        if (rowsAffected == 0) {
-	        	throw new NotFoundCategoryException("Can not found category with id : " + id);
-	        }
+		Category category = getCategoryById(id);
+		
+		if(category == null) {
+			throw new NotFoundCategoryException("Can not founđ category with id : " + id);
+		}
+		
+		entityManager.remove(category);
+		
+//		Query query = entityManager.createNativeQuery("DELETE FROM category c WHERE c.id = :id");
+//		
+//		query.setParameter("id", id);
+//		
+//		 int rowsAffected = query.executeUpdate();
+//	        if (rowsAffected == 0) {
+//	        	throw new NotFoundCategoryException("Can not found category with id : " + id);
+//	        }
 	}
 	
 

@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
+import com.hstore.vn.SetupDataLoader;
+import com.hstore.vn.dao.RoleDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Role;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.user.UserNotFoundException;
 
@@ -48,8 +51,7 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public User getUserByEmail(String email) {
-		System.out.println(email);
-
+		
 		Query query = em.createNativeQuery("SELECT * FROM user WHERE email = :email", User.class);
 
 		// TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM user u WHERE
@@ -61,7 +63,6 @@ public class JpaUserDao implements UserDao {
 		if (user != null) {
 			user.enabled = true;
 		}
-
 		return user;
 	}
 
@@ -100,6 +101,7 @@ public class JpaUserDao implements UserDao {
 	@Transactional
 	@Override
 	public void deleteUser(Integer id) {
+
 		if (id == null) {
 			throw new IllegalArgumentException("User Id must not be null");
 		}

@@ -2,23 +2,16 @@ package com.hstore.vn.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -26,6 +19,7 @@ import jakarta.validation.constraints.Email;
 
 @Entity(name = "user")
 @Table(name = "user")
+
 public class User implements UserDetails {
 
 	/**
@@ -53,6 +47,7 @@ public class User implements UserDetails {
 	@Column(name = "password")
 	public String password;
 
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	public List<Role> rolesDto;
@@ -75,6 +70,7 @@ public class User implements UserDetails {
 	@Column(name = "refferer_user_id")
 	public Integer reffererUser;
 
+
 	private Boolean locked = false;
 
 	@Column(name = "enabled", columnDefinition = "BOOLEAN")
@@ -87,6 +83,7 @@ public class User implements UserDetails {
 	public void setPurchases(List<Purchase> purchases) {
 		this.purchases = purchases;
 	}
+
 
 	public Integer getId() {
 		return id;
@@ -136,12 +133,14 @@ public class User implements UserDetails {
 		this.password = password;
 	}
 
+
 	public List<Role> getRoles() {
 		return rolesDto;
 	}
 
 	public void setRoles(List<Role> rolesDto) {
 		this.rolesDto = rolesDto;
+
 	}
 
 	public Cart getCart() {
@@ -239,5 +238,6 @@ public class User implements UserDetails {
 		// TODO Auto-generated method stub
 		return enabled;
 	}
+
 
 }

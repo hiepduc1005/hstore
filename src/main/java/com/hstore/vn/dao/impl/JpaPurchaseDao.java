@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.UserDao;
 import com.hstore.vn.entity.Purchase;
-import com.hstore.vn.exception.purchase.DeletePurchaseFailure;
 import com.hstore.vn.exception.purchase.PurchaseNotFoundException;
 import com.hstore.vn.exception.user.UserNotFoundException;
 
@@ -111,27 +110,33 @@ public class JpaPurchaseDao implements PurchaseDao{
 		if(purchaseId == null || purchaseId < 1) {
 			throw new IllegalArgumentException("Purchase id must be type int");
 		}
-		if(getPurchaseById(purchaseId) == null) {
+		
+		Purchase purchase = getPurchaseById(purchaseId);
+		
+		if(purchase == null) {
 			throw new PurchaseNotFoundException("Can not found purchase with id " + purchaseId);
-		}
-		
-		Query queryDeleteFKPruchaseId = 
-				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
-		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
-		queryDeleteFKPruchaseId.executeUpdate();
-		
-		Query query = entityManager.createNativeQuery("DELETE FROM purchase p WHERE p.id = :id ");
-		query.setParameter("id", purchaseId);
-		int rowEffect = query.executeUpdate();
-		
-		if(rowEffect < 1 ) {
-			throw new DeletePurchaseFailure("Delete purchase id : " + purchaseId + " failed");
 		}
 		
 //		Query queryDeleteFKPruchaseId = 
 //				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
 //		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
 //		queryDeleteFKPruchaseId.executeUpdate();
+//		
+//		Query query = entityManager.createNativeQuery("DELETE FROM purchase p WHERE p.id = :id ");
+//		query.setParameter("id", purchaseId);
+//		int rowEffect = query.executeUpdate();
+//		
+//		if(rowEffect < 1 ) {
+//			throw new DeletePurchaseFailure("Delete purchase id : " + purchaseId + " failed");
+//		}
+		
+//		Query queryDeleteFKPruchaseId = 
+//				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
+//		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
+//		queryDeleteFKPruchaseId.executeUpdate();
+				
+		
+		entityManager.remove(purchase);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,17 +153,24 @@ public class JpaPurchaseDao implements PurchaseDao{
 		
 		Query querySelectPruchaseId = entityManager.createNativeQuery("SELECT id FROM purchase WHERE user_id = :id" ,Integer.class );
 		querySelectPruchaseId.setParameter("id", userId);
-		
+				
 		Integer purchaseId = (Integer)querySelectPruchaseId.getResultList().stream().findFirst().orElse(null);
+		Purchase purchase = getPurchaseById(purchaseId);
 		
-		Query queryDeleteFKPruchaseId = 
-				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
-		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
-		queryDeleteFKPruchaseId.executeUpdate();
+		if(purchase == null) {
+			throw new PurchaseNotFoundException("Can not found purchase with id : " + purchaseId);
+		}
 		
-		Query query = entityManager.createNativeQuery("DELETE FROM purchase WHERE user_id = :id ");
-		query.setParameter("id", userId);
-		query.executeUpdate();
+		entityManager.remove(purchase);
+		
+//		Query queryDeleteFKPruchaseId = 
+//				entityManager.createNativeQuery("DELETE FROM purchases_products p WHERE p.purchase_id = :id ");
+//		queryDeleteFKPruchaseId.setParameter("id", purchaseId);
+//		queryDeleteFKPruchaseId.executeUpdate();
+//		
+//		Query query = entityManager.createNativeQuery("DELETE FROM purchase WHERE user_id = :id ");
+//		query.setParameter("id", userId);
+//		query.executeUpdate();
 		
 //		if(rowEffect < 1 ) {
 //			throw new DeletePurchaseFailure("Delete purchase by user id : " + userId + " failed");

@@ -103,7 +103,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 			userDto.setFirstName("Admin");
 			userDto.setLastName("Admin");
 			userDto.setPassword(passwordEncoder.encode(password));
-			userDto.setRoles(Arrays.asList(roleDto));
+			userDto.addRole(roleDto);
 			userDto.setMoney(BigDecimal.valueOf(0));
 			userDao.saveUser(userDto);
 		}
@@ -117,7 +117,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		if(roleDto == null ) {
 			roleDto = new Role();
 			roleDto.setName(roleName);
-			roleDto.setPrivileges(privilegeDtos);
+			for(Privilege privilege : privilegeDtos) {
+				roleDto.addPrivilege(privilege);
+			}
+			
 			roleDao.save(roleDto);
 		}
 		return roleDto;

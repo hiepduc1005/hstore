@@ -98,7 +98,12 @@ public class PurchaseController {
 	@PostMapping("/purchase")
 	public ApiResponse<ResponseEntity<PurchaseResponse>> createPurchase(@RequestBody PurchaseRequest purchaseRequest){
 		Purchase purchase = new Purchase();
-		purchase.setProducts(purchaseConvert.purchaseRequestToListProduct(purchaseRequest));
+		
+		List<Product> products = purchaseConvert.purchaseRequestToListProduct(purchaseRequest); 
+		for(Product product : products) {
+			purchase.addProduct(product);
+		}
+		
 		purchase.setAddress(purchaseRequest.getAddress());
 		Purchase purchaseSaved = purchaseService.savePurchase(purchase);
 		
@@ -129,7 +134,10 @@ public class PurchaseController {
 		Purchase purchase = purchaseService.getPurchaseById(purchaseRequestUpdate.getId());
 		List<Product> products = purchaseConvert.purchaseRequestUpdateToListProduct(purchaseRequestUpdate);
 		
-		purchase.setProducts(products);
+		for(Product product : products) {
+			purchase.addProduct(product);
+		}
+		
 		PurchaseResponse purchaseResponse = purchaseConvert.purchaseConvertToPurchaseResponse(purchase);
 		
 		purchaseService.updatePurchase(purchase);
