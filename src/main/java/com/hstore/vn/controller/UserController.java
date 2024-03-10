@@ -16,18 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.dao.UserDao;
-
+import com.hstore.vn.dto.request.UserEmailRequest;
+import com.hstore.vn.dto.request.UserIdRequest;
+import com.hstore.vn.dto.request.UserRequest;
+import com.hstore.vn.dto.request.UserRequestUpdate;
+import com.hstore.vn.dto.response.ApiResponse;
+import com.hstore.vn.dto.response.UserResponse;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
-import com.hstore.vn.payload.converter.RoleConvert;
-import com.hstore.vn.payload.converter.UserConvert;
-import com.hstore.vn.payload.request.UserEmailRequest;
-import com.hstore.vn.payload.request.UserIdRequest;
-import com.hstore.vn.payload.request.UserRequest;
-import com.hstore.vn.payload.request.UserRequestUpdate;
-import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.payload.response.UserResponse;
 import com.hstore.vn.service.UserService;
+import com.hstore.vn.service.convert.RoleConvert;
+import com.hstore.vn.service.convert.UserConvert;
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {

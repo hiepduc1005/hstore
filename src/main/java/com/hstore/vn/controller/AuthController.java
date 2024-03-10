@@ -1,5 +1,6 @@
 package com.hstore.vn.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.dto.request.LoginRequest;
+import com.hstore.vn.dto.request.RegistrationRequest;
+import com.hstore.vn.dto.response.ApiResponse;
+import com.hstore.vn.dto.response.AuthResponse;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
-import com.hstore.vn.payload.request.LoginRequest;
-import com.hstore.vn.payload.request.RegistrationRequest;
-import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.payload.response.AuthResponse;
 import com.hstore.vn.security.CustomUserDetailService;
 import com.hstore.vn.security.JWTGenerator;
 import com.hstore.vn.service.UserService;
+import com.hstore.vn.service.impl.EmailValidator;
+
+import jakarta.security.auth.message.AuthException;
 
 @RestController
 @RequestMapping(path = "/api/v1/auth")
@@ -71,7 +75,13 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest){
+	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) throws AuthException{
+		String email = loginRequest.getEmail();
+		
+		if(!EmailValidator.isValidEmail(email)) {
+			throw new AuthException("Invalid email");
+		}
+		
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						loginRequest.getEmail(),

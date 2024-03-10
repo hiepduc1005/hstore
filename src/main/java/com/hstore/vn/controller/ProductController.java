@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hstore.vn.dto.request.ProductRequest;
+import com.hstore.vn.dto.request.ProductRequestUpdate;
+import com.hstore.vn.dto.response.ApiResponse;
+import com.hstore.vn.dto.response.CategoryResponse;
+import com.hstore.vn.dto.response.ProductResponse;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.exception.product.NotFoundProductException;
-import com.hstore.vn.payload.converter.CategoryConvert;
-import com.hstore.vn.payload.converter.ProductConvert;
-import com.hstore.vn.payload.request.ProductRequest;
-import com.hstore.vn.payload.request.ProductRequestUpdate;
-import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.payload.response.CategoryResponse;
-import com.hstore.vn.payload.response.ProductResponse;
 import com.hstore.vn.service.ProductService;
+import com.hstore.vn.service.convert.CategoryConvert;
+import com.hstore.vn.service.convert.ProductConvert;
 
 @RestController
 @RequestMapping("/api/v1/product")

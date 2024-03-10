@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.PurchaseStatusDao;
+import com.hstore.vn.dto.request.PurchaseRequest;
+import com.hstore.vn.dto.request.PurchaseRequestUpdate;
+import com.hstore.vn.dto.response.ApiResponse;
+import com.hstore.vn.dto.response.PurchaseResponse;
+import com.hstore.vn.dto.response.TotalPriceResponse;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
-import com.hstore.vn.payload.converter.PurchaseConvert;
-import com.hstore.vn.payload.request.PurchaseRequest;
-import com.hstore.vn.payload.request.PurchaseRequestUpdate;
-import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.payload.response.PurchaseResponse;
-import com.hstore.vn.payload.response.TotalPriceResponse;
 import com.hstore.vn.service.PurchaseService;
+import com.hstore.vn.service.convert.PurchaseConvert;
 
 @RestController
 @RequestMapping("/api/v1")

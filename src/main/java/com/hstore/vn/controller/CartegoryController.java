@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hstore.vn.dto.request.CategoryRequest;
+import com.hstore.vn.dto.response.ApiResponse;
+import com.hstore.vn.dto.response.CategoryResponse;
 import com.hstore.vn.entity.Category;
-import com.hstore.vn.payload.converter.CategoryConvert;
-import com.hstore.vn.payload.request.CategoryRequest;
-import com.hstore.vn.payload.response.ApiResponse;
-import com.hstore.vn.payload.response.CategoryResponse;
 import com.hstore.vn.service.CategoryService;
+import com.hstore.vn.service.convert.CategoryConvert;
 
 @RestController
 @RequestMapping(path = "/api/v1/category")

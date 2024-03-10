@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.hstore.vn.dto.response.ApiResponse;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.exception.cart.CartNotFoundException;
 import com.hstore.vn.exception.category.NotFoundCategoryException;
@@ -22,13 +23,22 @@ import com.hstore.vn.exception.purchasestatus.PurchaseStatusNotFoundException;
 import com.hstore.vn.exception.role.RoleNotFoundException;
 import com.hstore.vn.exception.user.CreateUserFailureException;
 import com.hstore.vn.exception.user.UserNotFoundException;
-import com.hstore.vn.payload.response.ApiResponse;
+import com.hstore.vn.exception.wishlist.WishListNotFoundException;
+
+import jakarta.security.auth.message.AuthException;
 
 @RestControllerAdvice
 public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = AuthenticationCredentialsNotFoundException.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleUnauthenticatedUser(AuthenticationCredentialsNotFoundException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.UNAUTHORIZED);
+    }
+	
+	@ExceptionHandler(value = AuthException.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleAuthenticate(AuthException ex) {
         ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.UNAUTHORIZED);
@@ -133,6 +143,13 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(value = PurchaseStatusNotFoundException.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePurchaseStatusNotFound(PurchaseStatusNotFoundException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+	
+	@ExceptionHandler(value = WishListNotFoundException.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePurchaseStatusNotFound(WishListNotFoundException ex) {
         ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);
