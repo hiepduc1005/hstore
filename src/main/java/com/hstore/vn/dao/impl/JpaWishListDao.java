@@ -14,7 +14,6 @@ import com.hstore.vn.dao.WishListDao;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.entity.WishList;
-import com.hstore.vn.exception.cart.CartNotFoundException;
 import com.hstore.vn.exception.product.NotFoundProductException;
 import com.hstore.vn.exception.user.UserNotFoundException;
 import com.hstore.vn.exception.wishlist.WishListNotFoundException;
@@ -63,7 +62,7 @@ public class JpaWishListDao implements WishListDao{
 		}
 		WishList wishList = userDto.getWishList();
 		if(wishList == null) {
-			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
+			throw new WishListNotFoundException("Can not found wishlist in user : " + userDto.getEmail());
 		}
 		
 		List<Product> productDtos = wishList.getProducts();
@@ -94,7 +93,7 @@ public class JpaWishListDao implements WishListDao{
 		}
 		WishList wishList = userDto.getWishList();
 		if(wishList == null) {
-			throw new CartNotFoundException("Can not found cart in user : " + userDto.getEmail());
+			throw new WishListNotFoundException("Can not found wishlist in user : " + userDto.getEmail());
 		}
 		
 		List<Product> productDtos = wishList.getProducts();
@@ -126,6 +125,10 @@ public class JpaWishListDao implements WishListDao{
 		}
 		
 		WishList wishList = em.find(WishList.class,wishListId);
+		
+		if(wishList == null) {
+			throw new WishListNotFoundException("Can not found wish list with id : " + wishListId);
+		}
 		
 		return wishList;
 	}

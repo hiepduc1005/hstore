@@ -157,7 +157,7 @@ public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
     }
 	
 	@ExceptionHandler(value = WishListNotFoundException.class)
-    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handlePurchaseStatusNotFound(WishListNotFoundException ex) {
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleWishListNotFound(WishListNotFoundException ex) {
         ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
         return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.NOT_FOUND);

@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -50,6 +50,11 @@ public class SecurityConfiguration {
 		return new DefaultAuthenticationProvider();
 	}
 	
+	@Bean
+	public AuthenticationEntryPoint authenticationEntryPoint() {
+		return new JwtAuthEntryPoint();
+	}
+	
 	
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -68,7 +73,7 @@ public class SecurityConfiguration {
 		    .csrf(csrf -> csrf.disable())
 		    
 		    .exceptionHandling(authEntryPoint ->
-		                       authEntryPoint.authenticationEntryPoint(jwtAuthEntryPoint))
+		                       authEntryPoint.authenticationEntryPoint(authenticationEntryPoint()))
 		    
 		    .sessionManagement(sessionManage -> 
 		                       sessionManage
@@ -78,8 +83,9 @@ public class SecurityConfiguration {
 		                                    .requestMatchers("api/v1/auth/**")
 		                                    .permitAll())
 		    .authorizeHttpRequests(requestMatcher -> 
-		                       requestMatcher.anyRequest().authenticated());
-		
+		                       requestMatcher.anyRequest().authenticated())
+		    .authenticationProvider(authenticationProvider());
+		    
 		
 		http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 		    

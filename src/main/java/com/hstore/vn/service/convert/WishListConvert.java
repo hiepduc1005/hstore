@@ -14,6 +14,7 @@ public class WishListConvert {
 	
 	public WishListResponse wishListConvertToWishListResponse(WishList wishList) {
 		
+		
 		return new WishListResponse(
 				wishList.getId(),
 				productConvert.productsConverToProductsResponse(wishList.getProducts())

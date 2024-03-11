@@ -8,8 +8,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class DefaultAuthenticationProvider implements AuthenticationProvider{
 	
 	@Autowired
@@ -25,15 +27,12 @@ public class DefaultAuthenticationProvider implements AuthenticationProvider{
 		
 		
 		UserDetails user = customUserDetailService.loadUserByUsername(userName);
-		if(user != null) {
-			if(isPasswordValid(user, password)) {
-				return new UsernamePasswordAuthenticationToken(userName, password , user.getAuthorities());
-			}
-			else {
-				throw new BadCredentialsException("Incorrect login/password pair");
-			}
+
+		if (isPasswordValid(user, password)) {
+			return new UsernamePasswordAuthenticationToken(userName, password, user.getAuthorities());
+		} else {
+			throw new BadCredentialsException("Incorrect login/password pair");
 		}
-		return null;
 	}
 	
 	private boolean isPasswordValid(UserDetails user , String password) {
