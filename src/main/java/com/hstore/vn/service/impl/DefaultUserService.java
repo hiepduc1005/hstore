@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,6 @@ import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
 
 @Service
-
 public class DefaultUserService implements UserService{
 	
 	@Autowired
@@ -84,6 +84,7 @@ public class DefaultUserService implements UserService{
 	}
 	
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public void createUser(User user, String refferedUserPartnerCode) {
 		String userEmailSignup = user.getEmail();
 		if(userDao.getUserByEmail(userEmailSignup) != null) {
@@ -144,11 +145,14 @@ public class DefaultUserService implements UserService{
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public List<User> getAllUser() {
 		return userDao.getAllUsers();
 	}
 
+	
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteUser(Integer id) {
 //		purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);

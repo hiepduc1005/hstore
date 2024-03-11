@@ -69,9 +69,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		Privilege writePrivilege = createPrivilegeIfNotFound(WRITE_PRIVILEGE);
 		Privilege deletePrivilege = createPrivilegeIfNotFound(DELETE_PRIVILEGE);
 		
-		createRoleIfNotFound(ROLE_CUSTOMER,Arrays.asList(readPrivilege));
-		createRoleIfNotFound(ROLE_MANAGER,Arrays.asList(readPrivilege,writePrivilege));
-		createRoleIfNotFound(ROLE_ADMIN,Arrays.asList(readPrivilege,writePrivilege,deletePrivilege));
+		Role roleCustomer =  createRoleIfNotFound(ROLE_CUSTOMER,Arrays.asList(readPrivilege));
+		Role roleManager = createRoleIfNotFound(ROLE_MANAGER,Arrays.asList(readPrivilege,writePrivilege));
+		Role roleAdmin  = createRoleIfNotFound(ROLE_ADMIN,Arrays.asList(readPrivilege,writePrivilege,deletePrivilege));
 		
 		createOrderStatusIfNotFound(RECEIVE_REQUEST);
 		createOrderStatusIfNotFound(SHIPPING);
@@ -83,9 +83,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
        
        
         
-//        createUserIfNotFound(roleAdmin,"admin@gmail.com","admin");
-//        createUserIfNotFound(roleManager,"manager@gmail.com" ,"manager");
-//        createUserIfNotFound(roleCustomer,"test@gmail.com", "test");
+        createUserIfNotFound(roleAdmin,"admin@gmail.com","admin");
+        createUserIfNotFound(roleManager,"manager@gmail.com" ,"manager");
+        createUserIfNotFound(roleCustomer,"test@gmail.com", "test");
 //        
         
 		

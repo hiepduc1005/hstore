@@ -3,6 +3,7 @@ package com.hstore.vn.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.CategoryDao;
@@ -36,11 +37,13 @@ public class DefaultCategoryService implements CategoryService{
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void createCategory(Category category) {
 		categoryDao.createCategory(category);
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteCategory(Integer id) {
 		categoryDao.deleteCategory(id);
 	}

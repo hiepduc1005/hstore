@@ -2,6 +2,7 @@ package com.hstore.vn.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +30,13 @@ import jakarta.security.auth.message.AuthException;
 
 @RestControllerAdvice
 public class ErrorControllerAdvisor extends ResponseEntityExceptionHandler{
+	
+	@ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleAuthenticate(AccessDeniedException ex) {
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        ApiResponse<ResponseEntity<String>> apiResponse = new ApiResponse<>(ex.getMessage(), responseEntity, -1);
+        return new ResponseEntity<ApiResponse<ResponseEntity<String>>>(apiResponse, HttpStatus.FORBIDDEN);
+    }
 	
 	@ExceptionHandler(value = AuthenticationCredentialsNotFoundException.class)
     public ResponseEntity<ApiResponse<ResponseEntity<String>>> handleUnauthenticatedUser(AuthenticationCredentialsNotFoundException ex) {

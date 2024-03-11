@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.hstore.vn.dao.ProductDao;
@@ -29,6 +30,7 @@ public class DefaultProductService implements ProductService {
 	}              
 	
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public Product saveProduct(Product product) {
 		product.setGuid(UUID.randomUUID().toString());
 		return productDao.saveProduct(product);
@@ -90,11 +92,13 @@ public class DefaultProductService implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public void updateProduct(Product product) {
 		productDao.update(product);
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public void deleteProduct(String uuid) {
 		productDao.deleteProduct(uuid);
 	}

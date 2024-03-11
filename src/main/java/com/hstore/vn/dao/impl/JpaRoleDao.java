@@ -45,9 +45,9 @@ public class JpaRoleDao implements RoleDao{
 		typedQuery.setParameter("name", name);
 	    Role roleDto	= typedQuery.getResultList().stream().findFirst().orElse(null);
 	    
-	    if(roleDto == null) {
-			throw new PrivilegeNotFoundException("Can not found role with name : " + name);
-		}
+//	    if(roleDto == null) {
+//			throw new PrivilegeNotFoundException("Can not found role with name : " + name);
+//		}
 	    
 		return roleDto;
 	}

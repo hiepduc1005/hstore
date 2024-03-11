@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -74,7 +75,9 @@ public class DefaultPurchaseService implements PurchaseService {
 		purchaseDao.updatePurchase(purchase);
 	}
 
+	
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public Purchase updateStatusPurchaseByPurchaseIdUpToOneStage(Integer purchaseId) {
 
 		
@@ -146,13 +149,16 @@ public class DefaultPurchaseService implements PurchaseService {
 		return null;
 	}
 
+	
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public List<Purchase> getNotCompletePurchaseBy(Integer completedPurchaseStatusId) {
 		// TODO Auto-generated method stub
 		return purchaseDao.getNotCompletedPurchases(completedPurchaseStatusId);
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public Purchase getPurchaseById(Integer id) {
 		return purchaseDao.getPurchaseById(id);
 	}
@@ -175,6 +181,7 @@ public class DefaultPurchaseService implements PurchaseService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public void deletePurchase(Integer purchaseId) {
 		purchaseDao.deletePurchaseById(purchaseId);
 	}

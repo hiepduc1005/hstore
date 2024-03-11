@@ -33,9 +33,9 @@ public class JpaPrivilegeDao implements PrivilegeDao{
 		typedQuery.setParameter("name",name);
 		Privilege privilegeDto = typedQuery.getResultList().stream().findFirst().orElse(null);
 
-		if(privilegeDto == null) {
-			throw new PrivilegeNotFoundException("Can not found privilege with name : " + name);
-		}
+//		if(privilegeDto == null) {
+//			throw new PrivilegeNotFoundException("Can not found privilege with name : " + name);
+//		}
 
 		
 		return privilegeDto;
