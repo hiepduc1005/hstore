@@ -7,9 +7,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import com.hstore.vn.SetupDataLoader;
 
@@ -26,14 +27,13 @@ import com.hstore.vn.service.GenneratePartnerCode;
 import com.hstore.vn.service.UserService;
 
 @Service
-public class DefaultUserService implements UserService{
-	
+public class DefaultUserService implements UserService {
+
 	@Autowired
 	public UserDao userDao;
-	
+
 	@Autowired
 	public RoleDao roleDao;
-	
 
 	@Autowired
 	public GenneratePartnerCode partnerCode;
@@ -41,80 +41,73 @@ public class DefaultUserService implements UserService{
 	@Autowired
 	public BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	
 	@Autowired
 	public CartDao cartDao;
-	
-	
+
 	@Autowired
 	public PurchaseDao purchaseDao;
-	
+
 	@Override
-	public void registerUser(User user ,String refferedUserPartnerCode) {
-		//handle exception
+	public void registerUser(User user, String refferedUserPartnerCode) {
+		// handle exception
 		String userEmailSignup = user.getEmail();
-		if(userDao.getUserByEmail(userEmailSignup) != null) {
+		if (userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
-		
+
 		user.setRoles(Arrays.asList(
 				roleDao.getRoleByName(SetupDataLoader.ROLE_CUSTOMER)));
-		if(!refferedUserPartnerCode.isEmpty()) {
-			  user.setReffererUser(
-        		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
-		}
-		else {
-			 user.setReffererUser(null);
+		if (!refferedUserPartnerCode.isEmpty()) {
+			user.setReffererUser(
+					userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+		} else {
+			user.setReffererUser(null);
 		}
 		user.setCart(new Cart());
 		user.getCart().setUser(user);
-		
+
 		user.setWishList(new WishList());
 		user.getWishList().setUser(user);
-		
-        user.setPartnerCode(partnerCode.genneratePartnerCode());
-        user.setMoney(BigDecimal.ZERO);
-        
-        
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        
-        userDao.saveUser(user);
-       
+
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
+		user.setMoney(BigDecimal.ZERO);
+
+		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+
+		userDao.saveUser(user);
+
 	}
-	
+
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN' , 'ROLE_MANAGER')")
 	public void createUser(User user, String refferedUserPartnerCode) {
 		String userEmailSignup = user.getEmail();
-		if(userDao.getUserByEmail(userEmailSignup) != null) {
+		if (userDao.getUserByEmail(userEmailSignup) != null) {
 			throw new EmailAlreadyExitsException("Email " + userEmailSignup + " already exist");
 		}
-		
-		if(!refferedUserPartnerCode.isEmpty()) {
-			  user.setReffererUser(
-      		userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+
+		if (!refferedUserPartnerCode.isEmpty()) {
+			user.setReffererUser(
+					userDao.getUserByPartnerCode(refferedUserPartnerCode).getId());
+		} else {
+			user.setReffererUser(null);
 		}
-		else {
-			 user.setReffererUser(null);
-		}
-		
+
 		user.setCart(new Cart());
 		user.getCart().setUser(user);
-		
+
 		user.setWishList(new WishList());
 		user.getWishList().setUser(user);
-		
-        user.setPartnerCode(partnerCode.genneratePartnerCode());
-        user.setMoney(BigDecimal.ZERO);
-        
-        
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        
-        userDao.saveUser(user);
-		
-        
+
+		user.setPartnerCode(partnerCode.genneratePartnerCode());
+		user.setMoney(BigDecimal.ZERO);
+
+		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+
+		userDao.saveUser(user);
+
 	}
 
 	@Override
@@ -150,13 +143,19 @@ public class DefaultUserService implements UserService{
 		return userDao.getAllUsers();
 	}
 
-	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteUser(Integer id) {
-//		purchaseDao.deletePurchaseByUserId(id);
+		// purchaseDao.deletePurchaseByUserId(id);
 		userDao.deleteUser(id);
 	}
 
+	@Override
+	public User getAuthenticatedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+
+		return getUserByEmail(email);
+	}
 
 }

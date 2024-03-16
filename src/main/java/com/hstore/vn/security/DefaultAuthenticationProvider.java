@@ -25,8 +25,13 @@ public class DefaultAuthenticationProvider implements AuthenticationProvider{
 		String userName = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		
+		System.out.println("dấdadsadasdsa");
 		
 		UserDetails user = customUserDetailService.loadUserByUsername(userName);
+		
+		if(user == null) {
+			throw new BadCredentialsException("Incorrect login/password pair");
+		}
 
 		if (isPasswordValid(user, password)) {
 			return new UsernamePasswordAuthenticationToken(userName, password, user.getAuthorities());
