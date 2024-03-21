@@ -24,7 +24,6 @@ import com.hstore.vn.dto.response.AuthResponse;
 import com.hstore.vn.entity.User;
 import com.hstore.vn.exception.auth.EmailAlreadyExitsException;
 import com.hstore.vn.security.CustomUserDetailService;
-import com.hstore.vn.security.DefaultAuthenticationProvider;
 import com.hstore.vn.security.JWTGenerator;
 import com.hstore.vn.service.UserService;
 import com.hstore.vn.service.impl.EmailValidator;

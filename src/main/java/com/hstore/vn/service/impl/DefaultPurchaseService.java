@@ -17,6 +17,7 @@ import com.hstore.vn.SetupDataLoader;
 import com.hstore.vn.dao.PurchaseDao;
 import com.hstore.vn.dao.PurchaseStatusDao;
 import com.hstore.vn.dao.UserDao;
+import com.hstore.vn.entity.Cart;
 import com.hstore.vn.entity.Product;
 import com.hstore.vn.entity.Purchase;
 import com.hstore.vn.entity.PurchaseStatus;
@@ -189,6 +190,18 @@ public class DefaultPurchaseService implements PurchaseService {
 	@Override
 	public List<Purchase> getPurchasesByUserId(Integer userId) {
 		return purchaseDao.getPurchasesByUserId(userId);
+	}
+
+	@Override
+	public Purchase createPurchaseByCartUser(Integer userId) {
+		User user = userDao.getUserById(userId);
+		Cart cart = user.getCart();
+		List<Product> products = cart.getProducts();
+		
+		Purchase purchase = new Purchase();
+		purchase.setProducts(products);
+		
+		return savePurchase(purchase);
 	}
 
 

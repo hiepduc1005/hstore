@@ -93,7 +93,7 @@ public class PurchaseController {
 				new ResponseEntity<TotalPriceResponse>(new TotalPriceResponse(totalPrice), HttpStatus.OK), 0);
 	}
 
-	@PostMapping("/purchase")
+	@PostMapping("/purchase-by-user")
 	public ApiResponse<ResponseEntity<PurchaseResponse>> createPurchase(@RequestBody PurchaseRequest purchaseRequest) {
 		Purchase purchase = new Purchase();
 
@@ -106,6 +106,21 @@ public class PurchaseController {
 
 		User userAuthenticated = userService.getAuthenticatedUser();
 		LOGGER.info("Purchase id " + purchase.getId() + " was created by user " + userAuthenticated.getEmail());
+
+		return new ApiResponse<ResponseEntity<PurchaseResponse>>(
+				"Create purchase success!",
+				new ResponseEntity<PurchaseResponse>(purchaseResponse, HttpStatus.OK), 0);
+	}
+	
+	@PostMapping("/purchase/cart")
+	public ApiResponse<ResponseEntity<PurchaseResponse>> createPurchaseByUserCart() {
+		
+		User userAuthenticated = userService.getAuthenticatedUser();
+		
+		Purchase purchase = purchaseService.createPurchaseByCartUser(userAuthenticated.getId());
+		PurchaseResponse purchaseResponse = purchaseConvert.purchaseConvertToPurchaseResponse(purchase);
+
+		LOGGER.info("Create purchase by user cart " + userAuthenticated.getEmail());
 
 		return new ApiResponse<ResponseEntity<PurchaseResponse>>(
 				"Create purchase success!",

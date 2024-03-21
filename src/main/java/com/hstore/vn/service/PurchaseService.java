@@ -29,6 +29,7 @@ public interface PurchaseService {
 	BigDecimal getTotalsMoneyInPurchaseWithAuthenticatedUser();
 	
 	List<Purchase> getPurchasesByUserId(Integer userId);
-
+	
+	public Purchase createPurchaseByCartUser(Integer userId);
 
 }
